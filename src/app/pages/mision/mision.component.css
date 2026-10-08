@@ -168,14 +168,58 @@
   top: 16px;
 }
 
-.objetivo {
+/* ---------- Ticket (dentro del reto) ---------- */
+.ticket {
+  background: var(--bg-header);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--current);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ticket__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.ticket__id {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ticket__meta {
+  color: var(--text-3);
+}
+
+.ticket__texto {
   margin: 0;
-  font-size: 15px;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
   color: var(--text-soft);
 }
 
-.objetivo strong {
-  color: var(--text);
+.ticket__objetivo {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-done);
+  background: var(--surface-done);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-soft);
+}
+
+.ticket__objetivo strong {
+  color: var(--done);
 }
 
 /* ---------- En construcción ---------- */

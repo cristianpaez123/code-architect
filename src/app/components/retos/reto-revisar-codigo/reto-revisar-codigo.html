@@ -1,0 +1,132 @@
+<div class="reto">
+
+  <!-- Instrucción -->
+  <div class="barra">
+    <p class="barra__texto">
+      @if (resuelto) {
+        <strong>Revisión completa.</strong> Encontraste los {{ totalProblemas }} problemas. Abajo está el código corregido.
+      } @else {
+        <strong>Haz clic en las líneas con problema</strong> para marcarlas. Clic otra vez para desmarcar.
+      }
+    </p>
+    <span class="barra__contador mono">{{ marcadas.length }} marcadas · {{ totalProblemas }} problemas</span>
+  </div>
+
+  <!-- Archivos del Pull Request -->
+  @for (archivo of archivos; track archivo.nombre) {
+    <div class="pr">
+      <div class="pr__cabecera">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg>
+        <span class="mono">{{ archivo.nombre }}</span>
+        <span class="pr__etiqueta">{{ archivo.nota ?? 'Revisión de código' }}</span>
+      </div>
+
+      <div class="codigo">
+        @for (linea of archivo.lineas; track linea.clave) {
+          @if (linea.estaVacia) {
+            <div class="linea linea--vacia" aria-hidden="true">
+              <span class="linea__numero">{{ linea.numero }}</span>
+            </div>
+          } @else {
+            <button
+              type="button"
+              class="linea"
+              [class.linea--marcada]="estaMarcada(linea.clave)"
+              [class.linea--acierto]="esEncontrada(linea.clave)"
+              [class.linea--falsa]="resultado[linea.clave] === 'falsa'"
+              [attr.aria-pressed]="estaMarcada(linea.clave)"
+              [attr.aria-label]="archivo.nombre + ', línea ' + linea.numero + ': ' + linea.texto"
+              [disabled]="resuelto"
+              (click)="alternar(linea.clave)"
+            >
+              <span class="linea__numero">{{ linea.numero }}</span>
+              <span class="linea__marca" aria-hidden="true">
+                @if (esEncontrada(linea.clave)) { ✓ }
+                @else if (resultado[linea.clave] === 'falsa') { ✕ }
+                @else if (estaMarcada(linea.clave)) { ● }
+              </span>
+              <code class="linea__texto">{{ linea.texto }}</code>
+            </button>
+          }
+
+          <!-- Comentarios de revisión debajo de la línea -->
+          @if (comentarioProblema(linea.clave); as texto) {
+            <div class="comentario comentario--acierto">
+              <span class="comentario__autor">Problema encontrado</span>
+              <p>{{ texto }}</p>
+            </div>
+          }
+          @if (comentarioFalsaAlarma(linea.clave); as texto) {
+            <div class="comentario comentario--falsa">
+              <span class="comentario__autor">Esta línea está bien</span>
+              <p>{{ texto }}</p>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Código corregido completo (al terminar) -->
+  @if (resuelto && archivosFinales.length > 0) {
+    <section class="corregido">
+      <h3 class="corregido__titulo">
+        <span class="corregido__icono" aria-hidden="true">✓</span>
+        Así queda el código corregido
+        @if (archivosFinales.length > 1) {
+          <span class="corregido__cantidad">{{ archivosFinales.length }} archivos</span>
+        }
+      </h3>
+      @for (archivo of archivosFinales; track archivo.archivo) {
+        <div class="pr pr--corregido">
+          <div class="pr__cabecera">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg>
+            <span class="mono">{{ archivo.archivo }}</span>
+          </div>
+          <pre class="corregido__codigo"><code>{{ archivo.codigo }}</code></pre>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- Enviar revisión y resultado -->
+  <div class="pie">
+    @if (resuelto) {
+      <div class="mensaje mensaje--exito" role="status">
+        <span class="mensaje__icono" aria-hidden="true">✓</span>
+        <div>
+          <strong>{{ usoSolucion ? 'Estos son los problemas del archivo.' : '¡Buena revisión! Pull Request rechazado con ' + totalProblemas + ' comentarios.' }}</strong>
+          <p>
+            @if (usoSolucion) {
+              Lee el comentario de cada línea y compara con la versión corregida.
+            } @else {
+              Lo lograste en {{ intentos }} {{ intentos === 1 ? 'intento' : 'intentos' }}. Compara con la versión corregida antes de continuar.
+            }
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn--primary btn--lg" (click)="terminar()">
+        Ver lo que aprendiste
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+      </button>
+    } @else {
+      @if (verificado && (cantidadFalsas > 0 || cantidadFaltantes > 0)) {
+        <div class="mensaje mensaje--error" role="status">
+          <span class="mensaje__icono" aria-hidden="true">!</span>
+          <div>
+            <strong>Todavía no está lista la revisión.</strong>
+            @if (cantidadFalsas > 0) {
+              <p>{{ cantidadFalsas === 1 ? 'Marcaste 1 línea que está bien' : 'Marcaste ' + cantidadFalsas + ' líneas que están bien' }}. Lee el comentario y desmárcala{{ cantidadFalsas === 1 ? '' : 's' }}.</p>
+            }
+            @if (cantidadFaltantes > 0) {
+              <p>{{ cantidadFaltantes === 1 ? 'Te falta 1 problema' : 'Te faltan ' + cantidadFaltantes + ' problemas' }} por encontrar. Equivocarse no resta puntos.</p>
+            }
+          </div>
+        </div>
+      }
+      <button type="button" class="btn btn--primary btn--lg" [disabled]="marcadas.length === 0" (click)="enviarRevision()">
+        Enviar revisión
+      </button>
+    }
+  </div>
+</div>

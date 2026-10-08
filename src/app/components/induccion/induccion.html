@@ -1,100 +1,188 @@
 @if (reto.induccion; as induccion) {
-  <article class="induccion">
+<article class="induccion">
 
-    <!-- Ticket -->
-    <section class="ticket">
-      <div class="ticket__bar">
-        <span class="ticket__id">TICKET #{{ reto.id }}</span>
-        <span class="ticket__meta">De: {{ induccion.remitente }} · Para: Junior Developer</span>
-      </div>
-      <p class="ticket__text">{{ reto.contexto }}</p>
+  <!-- Concepto que se aprende en este reto -->
+  <section class="concepto">
+    <span class="concepto__icono" aria-hidden="true">📘</span>
+    <div class="concepto__info">
+      <span class="concepto__etiqueta">EN ESTE RETO APRENDES</span>
+      <h2 class="concepto__nombre">{{ reto.concepto }}</h2>
+      <p class="concepto__texto">{{ reto.descripcion }}</p>
+    </div>
+    @if (reto.evidencia) {
+    <span class="concepto__evidencia mono">Evidencia {{ reto.evidencia }}</span>
+    }
+  </section>
+
+  <!-- Idea y vida real -->
+  <div class="ideas">
+    <section class="bloque bloque--idea">
+      <h2 class="bloque__titulo"><span aria-hidden="true">💡</span> La idea en una frase</h2>
+      <p class="bloque__texto">{{ induccion.idea }}</p>
     </section>
 
-    <!-- Idea y vida real -->
-    <div class="ideas">
-      <section class="bloque bloque--idea">
-        <h2 class="bloque__titulo"><span aria-hidden="true">💡</span> La idea en una frase</h2>
-        <p class="bloque__texto">{{ induccion.idea }}</p>
-      </section>
-
-      <section class="bloque">
-        <h2 class="bloque__titulo"><span aria-hidden="true">🌎</span> En la vida real</h2>
-        <p class="bloque__texto">{{ induccion.vidaReal }}</p>
-      </section>
-    </div>
-
-    <!-- Código de ejemplo -->
     <section class="bloque">
-      <h2 class="bloque__titulo"><span aria-hidden="true">🧩</span> Cómo se ve en código</h2>
-      <div class="ejemplos">
-        @for (ejemplo of induccion.ejemplos; track $index) {
-          <figure class="ejemplo" [class.ejemplo--mal]="!ejemplo.esCorrecto" [class.ejemplo--bien]="ejemplo.esCorrecto">
-            <figcaption class="ejemplo__titulo">
-              <span class="ejemplo__icono" aria-hidden="true">{{ ejemplo.esCorrecto ? '✓' : '✕' }}</span>
-              {{ ejemplo.titulo }}
-            </figcaption>
-            @if (ejemplo.archivo) {
-              <div class="ejemplo__archivo">{{ ejemplo.archivo }}</div>
-            }
-            <pre class="ejemplo__codigo"><code>{{ ejemplo.codigo }}</code></pre>
-          </figure>
+      <h2 class="bloque__titulo"><span aria-hidden="true">🌎</span> En la vida real</h2>
+      <p class="bloque__texto">{{ induccion.vidaReal }}</p>
+    </section>
+  </div>
+
+  <!-- Código de ejemplo -->
+  <section class="bloque">
+    <h2 class="bloque__titulo"><span aria-hidden="true">🧩</span> Cómo se ve en código</h2>
+
+    <!-- Leyenda: qué significa cada color -->
+    @if (tiposUsados.length > 0) {
+    <div class="leyenda">
+      <span class="leyenda__titulo">Cómo leer el código: cada color señala qué es esa parte</span>
+      <ul class="leyenda__lista">
+        @for (tipo of tiposUsados; track tipo) {
+        <li class="leyenda__item">
+          <span class="chip" [class]="'chip chip--' + tipo">{{ anotacionInfo[tipo].nombre }}</span>
+          <span>{{ anotacionInfo[tipo].descripcion }}</span>
+        </li>
+        }
+      </ul>
+    </div>
+    }
+
+    <!-- Ejemplos neutros (el contrato, un diagrama…) a todo el ancho -->
+    @for (ejemplo of ejemplosNeutros; track $index) {
+    <ng-container *ngTemplateOutlet="tarjetaEjemplo; context: { $implicit: ejemplo }" />
+    }
+
+    @if (hayComparacion) {
+    <!-- Comparación lado a lado -->
+    <div class="comparacion">
+      <div class="comparacion__columna">
+        <h3 class="comparacion__titulo comparacion__titulo--mal"><span aria-hidden="true">✕</span> Así NO</h3>
+        @for (ejemplo of ejemplosMal; track $index) {
+        <ng-container *ngTemplateOutlet="tarjetaEjemplo; context: { $implicit: ejemplo }" />
         }
       </div>
-    </section>
-
-    <!-- Tabla guía -->
-    <section class="bloque">
-      <h2 class="bloque__titulo"><span aria-hidden="true">🛠️</span> {{ induccion.guia.titulo }}</h2>
-      <div class="tabla-scroll">
-        <table class="tabla">
-          <thead>
-            <tr>
-              @for (columna of induccion.guia.columnas; track $index) {
-                <th scope="col">{{ columna }}</th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            @for (fila of induccion.guia.filas; track $index) {
-              <tr>
-                @for (celda of fila; track $index) {
-                  <td>{{ celda }}</td>
-                }
-              </tr>
-            }
-          </tbody>
-        </table>
+      <div class="comparacion__columna">
+        <h3 class="comparacion__titulo comparacion__titulo--bien"><span aria-hidden="true">✓</span> Así SÍ</h3>
+        @for (ejemplo of ejemplosBien; track $index) {
+        <ng-container *ngTemplateOutlet="tarjetaEjemplo; context: { $implicit: ejemplo }" />
+        }
       </div>
-      @if (induccion.notaAngular) {
-        <p class="nota"><strong>En Angular:</strong> {{ induccion.notaAngular }}</p>
+    </div>
+    } @else {
+    <div class="ejemplos">
+      @for (ejemplo of ejemplosMal; track $index) {
+      <ng-container *ngTemplateOutlet="tarjetaEjemplo; context: { $implicit: ejemplo }" />
       }
+      @for (ejemplo of ejemplosBien; track $index) {
+      <ng-container *ngTemplateOutlet="tarjetaEjemplo; context: { $implicit: ejemplo }" />
+      }
+    </div>
+    }
+  </section>
+
+  <!-- Tabla guía -->
+  <section class="bloque">
+    <h2 class="bloque__titulo"><span aria-hidden="true">🛠️</span> {{ induccion.guia.titulo }}</h2>
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr>
+            @for (columna of induccion.guia.columnas; track $index) {
+            <th scope="col">{{ columna }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of induccion.guia.filas; track $index) {
+          <tr>
+            @for (celda of fila; track $index) {
+            <td>{{ celda }}</td>
+            }
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    @if (induccion.notaAngular) {
+    <p class="nota"><strong>En Angular:</strong> {{ induccion.notaAngular }}</p>
+    }
+  </section>
+
+  <!-- Objetivo y cómo se juega -->
+  <div class="ideas">
+    <section class="bloque bloque--objetivo">
+      <h2 class="bloque__titulo"><span aria-hidden="true">🎯</span> Tu objetivo</h2>
+      <p class="bloque__texto">{{ induccion.objetivo }}</p>
     </section>
 
-    <!-- Objetivo y cómo se juega -->
-    <div class="ideas">
-      <section class="bloque bloque--objetivo">
-        <h2 class="bloque__titulo"><span aria-hidden="true">🎯</span> Tu objetivo</h2>
-        <p class="bloque__texto">{{ induccion.objetivo }}</p>
-      </section>
+    <section class="bloque">
+      <h2 class="bloque__titulo"><span aria-hidden="true">🎮</span> Cómo se juega</h2>
+      <ol class="pasos">
+        @for (paso of induccion.comoJugar; track $index) {
+        <li>{{ paso }}</li>
+        }
+      </ol>
+    </section>
+  </div>
 
-      <section class="bloque">
-        <h2 class="bloque__titulo"><span aria-hidden="true">🎮</span> Cómo se juega</h2>
-        <ol class="pasos">
-          @for (paso of induccion.comoJugar; track $index) {
-            <li>{{ paso }}</li>
-          }
-        </ol>
-      </section>
-    </div>
+  <div class="acciones">
+    <button type="button" class="btn btn--primary btn--lg" (click)="empezar.emit()">
+      {{ modoRepaso ? 'Volver al reto' : 'Entendido, empezar reto' }}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </svg>
+    </button>
+    @if (!modoRepaso) {
+    <span class="acciones__nota">Puedes volver a esta explicación cuando quieras con «Repasar concepto». Es
+      gratis.</span>
+    }
+  </div>
+</article>
+}
 
-    <div class="acciones">
-      <button type="button" class="btn btn--primary btn--lg" (click)="empezar.emit()">
-        {{ modoRepaso ? 'Volver al reto' : 'Entendido, empezar reto' }}
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
-      </button>
-      @if (!modoRepaso) {
-        <span class="acciones__nota">Puedes volver a esta explicación cuando quieras con «Repasar concepto». Es gratis.</span>
+<!-- Tarjeta de un ejemplo de código (se reutiliza arriba) -->
+<ng-template #tarjetaEjemplo let-ejemplo>
+  <figure class="ejemplo" [class.ejemplo--mal]="ejemplo.esCorrecto === false"
+    [class.ejemplo--bien]="ejemplo.esCorrecto === true" [class.ejemplo--neutro]="ejemplo.esCorrecto === undefined"
+    [class.ejemplo--anotado]="tieneAnotaciones(ejemplo)">
+    <figcaption class="ejemplo__titulo">
+      @if (ejemplo.esCorrecto !== undefined) {
+      <span class="ejemplo__icono" aria-hidden="true">{{ ejemplo.esCorrecto ? '✓' : '✕' }}</span>
+      }
+      {{ ejemplo.titulo }}
+    </figcaption>
+    @if (ejemplo.archivo) {
+    <div class="ejemplo__archivo">{{ ejemplo.archivo }}</div>
+    }
+
+    @if (tieneAnotaciones(ejemplo)) {
+    <!-- Código con números y colores -->
+    <div class="anotado">
+      @for (linea of anotado(ejemplo).lineas; track linea.numero) {
+      <div class="anotado__linea">
+        <span class="anotado__numero" aria-hidden="true">{{ linea.numero }}</span>
+        <code
+          class="anotado__texto">@for (pedazo of linea.pedazos; track $index) {@if (pedazo.tipo) {<mark class="marca" [class]="'marca marca--' + pedazo.tipo">{{ pedazo.texto }}<sup class="burbuja" [class]="'burbuja burbuja--' + pedazo.tipo">{{ pedazo.numero }}</sup></mark>} @else {<span>{{ pedazo.texto }}</span>}}@for (nota of linea.notasAlFinal; track nota.numero) {<sup class="burbuja burbuja--suelta" [class]="'burbuja burbuja--suelta burbuja--' + nota.tipo">{{ nota.numero }}</sup>}</code>
+      </div>
       }
     </div>
-  </article>
-}
+
+    <!-- Explicación de cada número -->
+    <ol class="notas">
+      @for (nota of anotado(ejemplo).notas; track nota.numero) {
+      <li class="nota-codigo">
+        <span class="burbuja burbuja--lista" [class]="'burbuja burbuja--lista burbuja--' + nota.tipo">{{ nota.numero
+          }}</span>
+        <div>
+          <span class="chip" [class]="'chip chip--' + nota.tipo">{{ anotacionInfo[nota.tipo].nombre }}</span>
+          <p>{{ nota.texto }}</p>
+        </div>
+      </li>
+      }
+    </ol>
+    } @else {
+    <pre class="ejemplo__codigo"><code>{{ ejemplo.codigo }}</code></pre>
+    }
+  </figure>
+</ng-template>

@@ -1,0 +1,309 @@
+:host {
+  display: block;
+}
+
+.reto {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- Barra de instrucción ---------- */
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--surface-current);
+  border: 1px solid var(--border-current);
+}
+
+.barra__texto {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+.barra__texto strong {
+  color: var(--text);
+}
+
+.barra__contador {
+  font-size: 12px;
+  color: var(--current-text);
+}
+
+/* ---------- Línea de tiempo ---------- */
+.flujo {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paso {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+/* Línea vertical que une los números */
+.paso:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 34px;
+  bottom: -14px;
+  width: 2px;
+  background: var(--border-strong);
+}
+
+.paso__numero {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  margin-top: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-muted);
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.paso--bien .paso__numero {
+  border-color: var(--done);
+  background: var(--done);
+  color: var(--bg);
+}
+
+.paso--mal .paso__numero {
+  border-color: #f0705a;
+  background: #f0705a;
+  color: var(--bg);
+}
+
+/* ---------- Tarjeta del fragmento ---------- */
+.paso__tarjeta {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-1);
+  overflow: hidden;
+  transition: border-color 150ms ease;
+}
+
+.paso--bien .paso__tarjeta {
+  border-color: var(--border-done);
+  background: var(--surface-done);
+}
+
+.paso--mal .paso__tarjeta {
+  border-color: #7a3328;
+  background: #1c1414;
+}
+
+.paso__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-header);
+}
+
+.paso__archivo {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.capa {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.capa--presentacion {
+  color: var(--current-text);
+  border-color: var(--border-current);
+}
+
+.capa--logica {
+  color: var(--xp);
+  border-color: #4a3b16;
+}
+
+.capa--datos {
+  color: #c4a5ff;
+  border-color: #3d2f5c;
+}
+
+.capa--servidor {
+  color: var(--text-2);
+  border-color: var(--border-strong);
+}
+
+.paso__codigo {
+  margin: 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.paso__explicacion {
+  margin: 0;
+  padding: 10px 14px 12px;
+  border-top: 1px solid #4a2a26;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #f4a99c;
+}
+
+.paso__explicacion strong {
+  color: #ffc7bc;
+}
+
+.paso__nota {
+  margin: 0;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--border-done);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-soft);
+}
+
+/* ---------- Botones ▲ ▼ ---------- */
+.paso__controles {
+  flex: 0 0 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mover {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.mover:hover:not(:disabled) {
+  border-color: var(--current);
+  background: var(--surface-current);
+}
+
+.mover:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ---------- Pie ---------- */
+.pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.mensaje {
+  flex: 1 1 100%;
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.mensaje p {
+  margin: 4px 0 0;
+  color: var(--text-2);
+}
+
+.mensaje__icono {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.mensaje--exito {
+  background: var(--surface-done);
+  border: 1px solid var(--border-done);
+}
+
+.mensaje--exito .mensaje__icono {
+  background: var(--done);
+  color: var(--bg);
+}
+
+.mensaje--error {
+  background: #1c1414;
+  border: 1px solid #5a2e2a;
+}
+
+.mensaje--error .mensaje__icono {
+  background: #f0705a;
+  color: var(--bg);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .paso {
+    gap: 8px;
+  }
+
+  .paso__numero {
+    flex-basis: 26px;
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .paso:not(:last-child)::after {
+    left: 12px;
+    top: 34px;
+  }
+
+  .paso__codigo {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+  .pie .btn {
+    width: 100%;
+  }
+}

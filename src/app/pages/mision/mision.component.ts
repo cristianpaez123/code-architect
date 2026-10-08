@@ -6,6 +6,9 @@ import { DIFICULTAD_NIVEL, DIFICULTAD_TEXTO, MisionInfo, Reto, TIPO_TEXTO } from
 import { Induccion } from '../../components/induccion/induccion';
 import { Mentor } from '../../components/mentor/mentor';
 import { RetoMoverCodigo } from '../../components/retos/reto-mover-codigo/reto-mover-codigo';
+import { RetoOrdenarFlujoComponent } from '../../components/retos/reto-ordenar-flujo/reto-ordenar-flujo';
+import { RetoRevisarCodigo } from '../../components/retos/reto-revisar-codigo/reto-revisar-codigo';
+import { RetoCompletarCodigo } from '../../components/retos/reto-completar-codigo/reto-completar-codigo';
 
 type Fase = 'induccion' | 'jugando' | 'completado';
 
@@ -17,7 +20,8 @@ type Fase = 'induccion' | 'jugando' | 'completado';
  */
 @Component({
   selector: 'app-mision',
-  imports: [RouterLink, Induccion, Mentor, RetoMoverCodigo],
+  imports: [RouterLink, Induccion, Mentor, RetoMoverCodigo, 
+    RetoOrdenarFlujoComponent, RetoRevisarCodigo, RetoCompletarCodigo],
   templateUrl: './mision.component.html',
   styleUrl: './mision.component.css',
 })

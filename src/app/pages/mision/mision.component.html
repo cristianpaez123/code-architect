@@ -1,180 +1,211 @@
 @if (reto; as reto) {
 
-  <!-- ===================== BARRA SUPERIOR ===================== -->
-  <header class="header">
-    <div class="header__inner">
-      <a class="brand" routerLink="/">
-        <span class="brand__mark">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m12 2 10 5-10 5L2 7l10-5z" /><path d="m2 17 10 5 10-5" /><path d="m2 12 10 5 10-5" />
-          </svg>
-        </span>
-        <span class="brand__name">Code Architect</span>
-      </a>
-
-      <a class="volver" routerLink="/mapa">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5" /><path d="m11 18-6-6 6-6" /></svg>
-        Volver al mapa
-      </a>
-
-      <div class="header__spacer"></div>
-
-      <span class="points">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /></svg>
-        {{ progreso.puntos }} pts
+<!-- ===================== BARRA SUPERIOR ===================== -->
+<header class="header">
+  <div class="header__inner">
+    <a class="brand" routerLink="/">
+      <span class="brand__mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m12 2 10 5-10 5L2 7l10-5z" />
+          <path d="m2 17 10 5 10-5" />
+          <path d="m2 12 10 5 10-5" />
+        </svg>
       </span>
-    </div>
-  </header>
+      <span class="brand__name">Code Architect</span>
+    </a>
 
-  <main class="pagina">
+    <a class="volver" routerLink="/mapa">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5" />
+        <path d="m11 18-6-6 6-6" />
+      </svg>
+      Volver al mapa
+    </a>
 
-    <!-- ===================== ENCABEZADO DE LA MISIÓN ===================== -->
-    <section class="cabecera">
-      <div class="cabecera__info">
-        <span class="eyebrow">MISIÓN {{ mision?.id }} · {{ mision?.titulo }}</span>
-        <h1 class="cabecera__titulo">
-          <span class="cabecera__numero">{{ numero(reto.id) }}</span>
-          {{ reto.titulo }}
-        </h1>
-        <div class="cabecera__meta">
-          <span class="difficulty">
-            <span class="difficulty__bars" aria-hidden="true">
-              <span class="bar on" style="height: 6px"></span>
-              <span class="bar" [class.on]="dificultadNivel[reto.dificultad] >= 2" style="height: 9px"></span>
-              <span class="bar" [class.on]="dificultadNivel[reto.dificultad] >= 3" style="height: 12px"></span>
-            </span>
-            {{ dificultadTexto[reto.dificultad] }}
+    <div class="header__spacer"></div>
+
+    <span class="points">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+      </svg>
+      {{ progreso.puntos }} pts
+    </span>
+  </div>
+</header>
+
+<main class="pagina">
+
+  <!-- ===================== ENCABEZADO DE LA MISIÓN ===================== -->
+  <section class="cabecera">
+    <div class="cabecera__info">
+      <span class="eyebrow">MISIÓN {{ mision?.id }} · {{ mision?.titulo }}</span>
+      <h1 class="cabecera__titulo">
+        <span class="cabecera__numero">{{ numero(reto.id) }}</span>
+        {{ reto.titulo }}
+      </h1>
+      <div class="cabecera__meta">
+        <span class="difficulty">
+          <span class="difficulty__bars" aria-hidden="true">
+            <span class="bar on" style="height: 6px"></span>
+            <span class="bar" [class.on]="dificultadNivel[reto.dificultad] >= 2" style="height: 9px"></span>
+            <span class="bar" [class.on]="dificultadNivel[reto.dificultad] >= 3" style="height: 12px"></span>
           </span>
-          <span class="points">+{{ reto.puntos }} pts</span>
-          <span class="chip">{{ tipoTexto[reto.tipoJuego] }}</span>
-          @if (esRepeticion) {
-            <span class="chip chip--repeticion">Repaso · no suma puntos</span>
-          }
-        </div>
+          {{ dificultadTexto[reto.dificultad] }}
+        </span>
+        <span class="points">+{{ reto.puntos }} pts</span>
+        <span class="chip">{{ tipoTexto[reto.tipoJuego] }}</span>
+        @if (esRepeticion) {
+        <span class="chip chip--repeticion">Repaso · no suma puntos</span>
+        }
       </div>
+    </div>
 
-      <!-- Fases -->
-      <ol class="fases" aria-label="Fases del reto">
-        <li class="fase" [class.fase--actual]="fase === 'induccion'" [class.fase--hecha]="fase !== 'induccion'">
-          <span class="fase__punto">{{ fase !== 'induccion' ? '✓' : '1' }}</span> Inducción
-        </li>
-        <li class="fase__linea" aria-hidden="true"></li>
-        <li class="fase" [class.fase--actual]="fase === 'jugando'" [class.fase--hecha]="fase === 'completado'">
-          <span class="fase__punto">{{ fase === 'completado' ? '✓' : '2' }}</span> Reto
-        </li>
-        <li class="fase__linea" aria-hidden="true"></li>
-        <li class="fase" [class.fase--actual]="fase === 'completado'">
-          <span class="fase__punto">3</span> Resultado
-        </li>
-      </ol>
-    </section>
+    <!-- Fases -->
+    <ol class="fases" aria-label="Fases del reto">
+      <li class="fase" [class.fase--actual]="fase === 'induccion'" [class.fase--hecha]="fase !== 'induccion'">
+        <span class="fase__punto">{{ fase !== 'induccion' ? '✓' : '1' }}</span> Inducción
+      </li>
+      <li class="fase__linea" aria-hidden="true"></li>
+      <li class="fase" [class.fase--actual]="fase === 'jugando'" [class.fase--hecha]="fase === 'completado'">
+        <span class="fase__punto">{{ fase === 'completado' ? '✓' : '2' }}</span> Reto
+      </li>
+      <li class="fase__linea" aria-hidden="true"></li>
+      <li class="fase" [class.fase--actual]="fase === 'completado'">
+        <span class="fase__punto">3</span> Resultado
+      </li>
+    </ol>
+  </section>
 
-    <!-- ===================== FASE 1: INDUCCIÓN ===================== -->
-    @if (fase === 'induccion') {
+  <!-- ===================== FASE 1: INDUCCIÓN ===================== -->
+  @if (fase === 'induccion') {
+  @if (reto.induccion) {
+  <app-induccion [reto]="reto" (empezar)="empezar()" />
+  } @else {
+  <div class="construccion">
+    <p class="construccion__titulo">🚧 Este reto todavía está en construcción.</p>
+    <p>Su contenido se agregará pronto.</p>
+    <a class="btn btn--secondary" routerLink="/mapa">Volver al mapa</a>
+  </div>
+  }
+  }
+
+  <!-- ===================== FASE 2: JUGANDO ===================== -->
+  @if (fase === 'jugando') {
+
+  <!-- Repasar la inducción sin perder lo que lleva hecho en el reto -->
+  @if (repasando) {
+  <app-induccion [reto]="reto" [modoRepaso]="true" (empezar)="volverAlReto()" />
+  }
+
+  <div class="juego" [hidden]="repasando">
+    <div class="juego__principal">
+      <!-- Ticket: el contexto y lo que hay que hacer -->
       @if (reto.induccion) {
-        <app-induccion [reto]="reto" (empezar)="empezar()" />
-      } @else {
-        <div class="construccion">
-          <p class="construccion__titulo">🚧 Este reto todavía está en construcción.</p>
-          <p>Su contenido se agregará pronto.</p>
-          <a class="btn btn--secondary" routerLink="/mapa">Volver al mapa</a>
+      <section class="ticket">
+        <div class="ticket__bar">
+          <span class="ticket__id">TICKET #{{ reto.id }}</span>
+          <span class="ticket__meta">De: {{ reto.induccion.remitente }} · Para: Junior Developer</span>
         </div>
-      }
-    }
-
-    <!-- ===================== FASE 2: JUGANDO ===================== -->
-    @if (fase === 'jugando') {
-
-      <!-- Repasar la inducción sin perder lo que lleva hecho en el reto -->
-      @if (repasando) {
-        <app-induccion [reto]="reto" [modoRepaso]="true" (empezar)="volverAlReto()" />
-      }
-
-      <div class="juego" [hidden]="repasando">
-        <div class="juego__principal">
-          @if (reto.induccion) {
-            <p class="objetivo"><span aria-hidden="true">🎯</span> <strong>Tu objetivo:</strong> {{ reto.induccion.objetivo }}</p>
-          }
-
-          @switch (reto.tipoJuego) {
-            @case ('mover-codigo') {
-              @if (reto.moverCodigo) {
-                <app-reto-mover-codigo
-                  [config]="reto.moverCodigo"
-                  [mostrarSolucion]="solucionUsada"
-                  (completado)="alCompletar()"
-                />
-              }
-            }
-            @default {
-              <div class="construccion">
-                <p class="construccion__titulo">🚧 Esta mecánica todavía está en construcción.</p>
-              </div>
-            }
-          }
-        </div>
-
-        <app-mentor
-          class="juego__mentor"
-          [pistas]="reto.pistas ?? []"
-          [pistasUsadas]="pistasUsadas"
-          [solucionUsada]="solucionUsada"
-          [puntosBase]="reto.puntos"
-          [puntosPosibles]="puntosPosibles"
-          [descuentoPista]="DESCUENTO_PISTA"
-          [descuentoSolucion]="DESCUENTO_SOLUCION"
-          (repasar)="repasar()"
-          (pedirPista)="pedirPista()"
-          (verSolucion)="verSolucion()"
-        />
-      </div>
-    }
-
-    <!-- ===================== FASE 3: RESULTADO ===================== -->
-    @if (fase === 'completado') {
-      <section class="resultado">
-        <div class="resultado__puntos">
-          <span class="resultado__check" aria-hidden="true">✓</span>
-          <div>
-            <p class="label">RETO COMPLETADO</p>
-            <p class="resultado__valor">
-              @if (esRepeticion) {
-                <span class="mono">Repaso terminado</span>
-              } @else {
-                <span class="mono">+{{ puntosObtenidos }}</span> <span class="resultado__de">/ {{ reto.puntos }} pts</span>
-              }
-            </p>
-          </div>
-        </div>
-
-        <ul class="desglose">
-          <li><span>Puntos del reto</span><span class="mono">{{ reto.puntos }}</span></li>
-          <li>
-            <span>Pistas usadas ({{ pistasUsadas }})</span>
-            <span class="mono">−{{ pistasUsadas * DESCUENTO_PISTA }} %</span>
-          </li>
-          <li>
-            <span>Solución</span>
-            <span class="mono">{{ solucionUsada ? '−' + DESCUENTO_SOLUCION + ' %' : 'No' }}</span>
-          </li>
-        </ul>
-
-        <div class="aprendido">
-          <span class="label">CONCEPTO APRENDIDO</span>
-          <h2 class="aprendido__titulo">{{ reto.concepto }}</h2>
-          <p class="aprendido__texto">{{ reto.explicacionFinal }}</p>
-        </div>
-
-        <div class="resultado__acciones">
-          <a class="btn btn--secondary btn--lg" routerLink="/mapa">Volver al mapa</a>
-          @if (siguienteReto; as siguiente) {
-            <a class="btn btn--primary btn--lg" [routerLink]="['/mision', siguiente.id]">
-              Siguiente reto: {{ siguiente.titulo }}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
-            </a>
-          }
-        </div>
+        <p class="ticket__texto">{{ reto.contexto }}</p>
+        <p class="ticket__objetivo">
+          <span aria-hidden="true">🎯</span>
+          <span><strong>Tu objetivo:</strong> {{ reto.induccion.objetivo }}</span>
+        </p>
       </section>
-    }
-  </main>
+      }
+
+      @switch (reto.tipoJuego) {
+      @case ('mover-codigo') {
+      @if (reto.moverCodigo) {
+      <app-reto-mover-codigo [config]="reto.moverCodigo" [mostrarSolucion]="solucionUsada"
+        (completado)="alCompletar()" />
+      }
+      }
+      @case ('ordenar-flujo') {
+      @if (reto.ordenarFlujo) {
+      <app-reto-ordenar-flujo [config]="reto.ordenarFlujo" [mostrarSolucion]="solucionUsada"
+        (completado)="alCompletar()" />
+      }
+      }
+      @case ('revisar-codigo') {
+      @if (reto.revisarCodigo) {
+      <app-reto-revisar-codigo [config]="reto.revisarCodigo" [mostrarSolucion]="solucionUsada"
+        (completado)="alCompletar()" />
+      }
+      }
+      @case ('completar-codigo') {
+      @if (reto.completarCodigo) {
+      <app-reto-completar-codigo [config]="reto.completarCodigo" [mostrarSolucion]="solucionUsada"
+        (completado)="alCompletar()" />
+      }
+      }
+      @default {
+      <div class="construccion">
+        <p class="construccion__titulo">🚧 Esta mecánica todavía está en construcción.</p>
+      </div>
+      }
+      }
+    </div>
+
+    <app-mentor class="juego__mentor" [pistas]="reto.pistas ?? []" [pistasUsadas]="pistasUsadas"
+      [solucionUsada]="solucionUsada" [puntosBase]="reto.puntos" [puntosPosibles]="puntosPosibles"
+      [descuentoPista]="DESCUENTO_PISTA" [descuentoSolucion]="DESCUENTO_SOLUCION" (repasar)="repasar()"
+      (pedirPista)="pedirPista()" (verSolucion)="verSolucion()" />
+  </div>
+  }
+
+  <!-- ===================== FASE 3: RESULTADO ===================== -->
+  @if (fase === 'completado') {
+  <section class="resultado">
+    <div class="resultado__puntos">
+      <span class="resultado__check" aria-hidden="true">✓</span>
+      <div>
+        <p class="label">RETO COMPLETADO</p>
+        <p class="resultado__valor">
+          @if (esRepeticion) {
+          <span class="mono">Repaso terminado</span>
+          } @else {
+          <span class="mono">+{{ puntosObtenidos }}</span> <span class="resultado__de">/ {{ reto.puntos }} pts</span>
+          }
+        </p>
+      </div>
+    </div>
+
+    <ul class="desglose">
+      <li><span>Puntos del reto</span><span class="mono">{{ reto.puntos }}</span></li>
+      <li>
+        <span>Pistas usadas ({{ pistasUsadas }})</span>
+        <span class="mono">−{{ pistasUsadas * DESCUENTO_PISTA }} %</span>
+      </li>
+      <li>
+        <span>Solución</span>
+        <span class="mono">{{ solucionUsada ? '−' + DESCUENTO_SOLUCION + ' %' : 'No' }}</span>
+      </li>
+    </ul>
+
+    <div class="aprendido">
+      <span class="label">CONCEPTO APRENDIDO</span>
+      <h2 class="aprendido__titulo">{{ reto.concepto }}</h2>
+      <p class="aprendido__texto">{{ reto.explicacionFinal }}</p>
+    </div>
+
+    <div class="resultado__acciones">
+      <a class="btn btn--secondary btn--lg" routerLink="/mapa">Volver al mapa</a>
+      @if (siguienteReto; as siguiente) {
+      <a class="btn btn--primary btn--lg" [routerLink]="['/mision', siguiente.id]">
+        Siguiente reto: {{ siguiente.titulo }}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14" />
+          <path d="m13 6 6 6-6 6" />
+        </svg>
+      </a>
+      }
+    </div>
+  </section>
+  }
+</main>
 }

@@ -8,42 +8,66 @@
   gap: 20px;
 }
 
-/* ---------- Ticket ---------- */
-.ticket {
-  background: var(--bg-header);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--current);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.ticket__bar {
+/* ---------- Concepto del reto ---------- */
+.concepto {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  font-family: var(--font-mono);
-  font-size: 12px;
+  align-items: center;
+  gap: 14px 16px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-current);
+  border-left: 4px solid var(--current);
+  background: var(--surface-current);
 }
 
-.ticket__id {
+.concepto__icono {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--current-icon-strong);
+  font-size: 22px;
+}
+
+.concepto__info {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.concepto__etiqueta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--current-text);
+}
+
+.concepto__nombre {
+  margin: 0;
+  font-size: 20px;
   font-weight: 600;
+  line-height: 1.3;
   color: var(--text);
 }
 
-.ticket__meta {
-  color: var(--text-3);
+.concepto__texto {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-2);
 }
 
-.ticket__text {
-  margin: 0;
-  padding: 16px;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--text-soft);
+.concepto__evidencia {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-current);
+  font-size: 11px;
+  color: var(--current-text);
 }
 
 /* ---------- Bloques ---------- */
@@ -98,7 +122,6 @@
 }
 
 .ejemplo {
-  flex: 1 1 260px;
   margin: 0;
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -107,13 +130,31 @@
   min-width: 0;
 }
 
-.ejemplo--mal {
+.ejemplos > .ejemplo {
+  flex: 1 1 420px;
+}
+
+.ejemplos > .ejemplo--mal,
+.ejemplos > .ejemplo--neutro {
   flex-basis: 100%;
+}
+
+.ejemplo--mal {
   border-color: #4a2a2a;
 }
 
 .ejemplo--bien {
   border-color: var(--border-done);
+}
+
+/* Diagrama sin ✓ ni ✕: ocupa todo el ancho y no parte las líneas */
+.ejemplo--neutro {
+  border-color: var(--border-current);
+}
+
+.ejemplo--neutro .ejemplo__codigo {
+  white-space: pre;
+  color: var(--current-text);
 }
 
 .ejemplo__titulo {
@@ -163,6 +204,198 @@
   line-height: 1.6;
   color: var(--text-soft);
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Leyenda: cómo leer el código ---------- */
+.leyenda {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.leyenda__titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.leyenda__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px 16px;
+}
+
+.leyenda__item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+/* ---------- Comparación: Así NO / Así SÍ ---------- */
+.comparacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.comparacion__columna {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.comparacion__titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.comparacion__titulo--mal {
+  background: #1c1414;
+  color: #f4a99c;
+  border: 1px solid #5a2e2a;
+}
+
+.comparacion__titulo--bien {
+  background: var(--surface-done);
+  color: var(--done);
+  border: 1px solid var(--border-done);
+}
+
+/* ---------- Colores por tipo ---------- */
+.chip--interface, .marca--interface, .burbuja--interface { --tipo: #c4a5ff; }
+.chip--clase, .marca--clase, .burbuja--clase { --tipo: #8db0ff; }
+.chip--constructor, .marca--constructor, .burbuja--constructor { --tipo: #7cd4ff; }
+.chip--metodo, .marca--metodo, .burbuja--metodo { --tipo: #f2b84b; }
+.chip--propiedad, .marca--propiedad, .burbuja--propiedad { --tipo: #5fd4c4; }
+.chip--variable, .marca--variable, .burbuja--variable { --tipo: #5fd4c4; }
+.chip--inyeccion, .marca--inyeccion, .burbuja--inyeccion { --tipo: #3dd68c; }
+.chip--problema, .marca--problema, .burbuja--problema { --tipo: #f0705a; }
+
+.chip {
+  display: inline-block;
+  flex: 0 0 auto;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--tipo);
+  color: var(--tipo);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Código con anotaciones ---------- */
+.anotado {
+  padding: 10px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.anotado__linea {
+  display: flex;
+  align-items: flex-start;
+  padding-right: 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text-soft);
+}
+
+.anotado__numero {
+  flex: 0 0 36px;
+  padding-right: 10px;
+  text-align: right;
+  color: var(--text-3);
+  user-select: none;
+}
+
+.anotado__texto {
+  flex: 1 1 0;
+  min-width: 0;
+  font-family: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* La parte resaltada: subrayado y fondo suave del color del tipo */
+.marca {
+  padding: 1px 2px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--tipo) 16%, transparent);
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--tipo);
+}
+
+/* El número que conecta el código con su explicación */
+.burbuja {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 3px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--tipo);
+  color: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: 2px;
+}
+
+.burbuja--suelta {
+  margin-left: 8px;
+}
+
+.burbuja--lista {
+  flex: 0 0 auto;
+  margin: 2px 0 0;
+  min-width: 22px;
+  height: 22px;
+  font-size: 12px;
+  vertical-align: 0;
+}
+
+/* Lista de explicaciones debajo del código */
+.notas {
+  margin: 0;
+  padding: 12px 14px 14px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.nota-codigo {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.nota-codigo p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-soft);
 }
 
 /* ---------- Tabla guía ---------- */
@@ -243,9 +476,24 @@
   color: var(--text-3);
 }
 
+@media (max-width: 900px) {
+  .comparacion {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 640px) {
   .bloque {
     padding: 16px;
+  }
+
+  .anotado__linea {
+    font-size: 12px;
+  }
+
+  .anotado__numero {
+    flex-basis: 28px;
+    padding-right: 6px;
   }
 
   .acciones .btn {
