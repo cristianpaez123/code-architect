@@ -11,7 +11,8 @@ export class JuegoService {
         { id: 1, titulo: 'Arquitectura en el frontend', evidencia: 'GP-ARQ-01, GP-ARQ-02' },
         { id: 2, titulo: 'SOLID: interfaces e inyección de dependencias', evidencia: 'GP-ARQ-03' },
         { id: 3, titulo: 'Patrones de diseño en el frontend', evidencia: 'GP-ARQ-05' },
-        { id: 4, titulo: 'Reto final', evidencia: 'GP-ARQ-05' }
+        { id: 4, titulo: 'Reto final', evidencia: 'GP-ARQ-05' },
+        { id: 5, titulo: 'Bonus: microservicios', evidencia: 'GP-ARQ-04' }
     ];
 
     private retos: Reto[] = [
@@ -31,44 +32,175 @@ export class JuegoService {
 
             induccion: {
                 remitente: 'Tech Lead',
+                definicion: 'MVC (Modelo–Vista–Controlador) es un patrón de arquitectura que divide una aplicación en tres partes: el Modelo (los datos y las reglas del negocio), la Vista (lo que el usuario ve) y el Controlador (el que recibe las acciones del usuario y coordina a los otros dos).',
                 idea: 'MVC divide una pantalla en tres partes: el Modelo (los datos), la Vista (lo que se ve) y el Controlador (lo que responde cuando el usuario hace algo).',
                 vidaReal: 'En un restaurante, la cocina guarda los ingredientes y prepara la comida: es el modelo. El plato servido en la mesa es lo que ves: la vista. El mesero toma tu pedido, lo lleva a la cocina y te trae el plato: es el controlador. El mesero no cocina y la cocina no atiende mesas.',
                 ejemplos: [
                     {
-                        titulo: 'Antes: todo mezclado en un solo archivo',
+                        titulo: 'Todo mezclado en un solo archivo',
                         esCorrecto: false,
-                        archivo: 'perfil.ts',
+                        archivo: 'perfil.componente.ts',
                         codigo:
-                            `const usuario = { nombre: 'Ana', edad: 20 };                       // datos
-function cambiarNombre(nuevo: string) { usuario.nombre = nuevo; }  // acción
-document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
+                            `@Component({
+  selector: 'app-perfil',
+  template: '<h1>{{ usuario.nombre }}</h1> <button (click)="cambiarNombre()">Cambiar</button>'
+})
+export class PerfilComponente {
+  usuario = { nombre: 'Ana', edad: 20 };
+
+  cambiarNombre() {
+    this.usuario.nombre = 'Luis';
+  }
+
+  esMayorDeEdad(): boolean {
+    return this.usuario.edad >= 18;
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 3,
+                                marca: 'template:',
+                                tipo: 'problema',
+                                texto: 'Aquí la VISTA (el HTML de la pantalla) está escrita dentro del .ts. Lo que se ve debería estar en su propio archivo .html.'
+                            },
+                            {
+                                linea: 5,
+                                marca: 'class PerfilComponente',
+                                tipo: 'clase',
+                                texto: 'Esto es una clase: la del componente. Debería ser solo el CONTROLADOR, pero aquí hace de todo.'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'usuario',
+                                tipo: 'propiedad',
+                                texto: 'Esto es una propiedad: guarda los datos del usuario que se muestran en pantalla.'
+                            },
+                            {
+                                linea: 6,
+                                marca: "{ nombre: 'Ana', edad: 20 }",
+                                tipo: 'problema',
+                                texto: 'La forma de los datos (qué tiene un usuario) está improvisada aquí. Debería estar definida en el MODELO: usuario.modelo.ts.'
+                            },
+                            {
+                                linea: 8,
+                                marca: 'cambiarNombre()',
+                                tipo: 'metodo',
+                                texto: 'Esto es un método: responde al clic del botón. Este sí es trabajo del controlador.'
+                            },
+                            {
+                                linea: 12,
+                                marca: 'esMayorDeEdad()',
+                                tipo: 'problema',
+                                texto: 'Una regla del negocio ("mayor de edad = 18 años") dentro del componente. Las reglas van en el MODELO, para usarlas en cualquier pantalla.'
+                            }
+                        ]
                     },
                     {
-                        titulo: 'Modelo: la forma de los datos',
+                        titulo: 'MODELO: los datos y las reglas',
                         esCorrecto: true,
                         archivo: 'usuario.modelo.ts',
                         codigo:
                             `export interface Usuario {
   nombre: string;
   edad: number;
-}`
+}
+
+export function esMayorDeEdad(usuario: Usuario): boolean {
+  return usuario.edad >= 18;
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'interface Usuario',
+                                tipo: 'interface',
+                                texto: 'La forma de los datos: todo usuario tiene un nombre y una edad.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'nombre: string',
+                                tipo: 'propiedad',
+                                texto: 'Una propiedad. ": string" significa que el nombre es texto.'
+                            },
+                            {
+                                linea: 3,
+                                marca: 'edad: number',
+                                tipo: 'propiedad',
+                                texto: 'Otra propiedad. ": number" significa que la edad es un número.'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'esMayorDeEdad(usuario: Usuario)',
+                                tipo: 'metodo',
+                                texto: 'La regla del negocio vive en el modelo. Sirve igual en el perfil, el registro o cualquier pantalla.'
+                            }
+                        ]
                     },
                     {
-                        titulo: 'Vista: lo que se ve',
+                        titulo: 'VISTA: lo que se ve',
                         esCorrecto: true,
                         archivo: 'perfil.componente.html',
                         codigo:
                             `<h1>{{ usuario.nombre }}</h1>
-<button (click)="cambiarNombre('Luis')">Cambiar nombre</button>`
+<button (click)="cambiarNombre()">Cambiar nombre</button>`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: '<h1>',
+                                tipo: 'html',
+                                texto: 'Una etiqueta HTML: un título. Todo lo que se dibuja en pantalla va en el .html.'
+                            },
+                            {
+                                linea: 1,
+                                marca: '{{ usuario.nombre }}',
+                                tipo: 'dato',
+                                texto: 'Las llaves dobles muestran un dato del controlador. Aquí se ve "Ana".'
+                            },
+                            {
+                                linea: 2,
+                                marca: '<button',
+                                tipo: 'html',
+                                texto: 'Otra etiqueta HTML: un botón.'
+                            },
+                            {
+                                linea: 2,
+                                marca: '(click)="cambiarNombre()"',
+                                tipo: 'evento',
+                                texto: 'Un evento: cuando el usuario hace clic, se ejecuta el método cambiarNombre() del controlador.'
+                            }
+                        ]
                     },
                     {
-                        titulo: 'Controlador: responde al clic',
+                        titulo: 'CONTROLADOR: responde al usuario',
                         esCorrecto: true,
                         archivo: 'perfil.componente.ts',
                         codigo:
-                            `cambiarNombre(nuevo: string) {
-  this.usuario.nombre = nuevo;
-}`
+                            `export class PerfilComponente {
+  usuario: Usuario = { nombre: 'Ana', edad: 20 };
+
+  cambiarNombre() {
+    this.usuario.nombre = 'Luis';
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'class PerfilComponente',
+                                tipo: 'clase',
+                                texto: 'La clase del componente: conecta la vista con el modelo.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'usuario: Usuario',
+                                tipo: 'propiedad',
+                                texto: 'Una propiedad que usa la forma definida en el modelo (Usuario).'
+                            },
+                            {
+                                linea: 4,
+                                marca: 'cambiarNombre()',
+                                tipo: 'metodo',
+                                texto: 'El método que responde al clic. Coordinar lo que pasa es el trabajo del controlador.'
+                            }
+                        ]
                     }
                 ],
                 guia: {
@@ -171,6 +303,7 @@ document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
 
             induccion: {
                 remitente: 'Soporte',
+                definicion: 'La arquitectura por capas organiza el software en niveles, cada uno con una responsabilidad: presentación, lógica de negocio y acceso a datos. Cada capa solo se comunica con la capa vecina: las peticiones bajan y las respuestas suben por el mismo camino.',
                 idea: 'La arquitectura por capas organiza el código en niveles, y cada capa solo habla con la que tiene justo debajo. Una acción baja por las capas y la respuesta sube por el mismo camino.',
                 vidaReal: 'Cuando pides un domicilio: tú tocas "Pedir" en la app (presentación). La app le pasa el pedido al restaurante, que revisa si hay ingredientes (lógica de negocio). El restaurante saca los ingredientes de su bodega (acceso a datos). La comida vuelve por el mismo camino hasta tu puerta. Tú nunca entras a la bodega.',
                 ejemplos: [
@@ -187,7 +320,21 @@ document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
                         titulo: '1. Vista: el usuario hace clic',
                         esCorrecto: true,
                         archivo: 'publicacion.componente.html',
-                        codigo: `<button (click)="darMeGusta()">❤️</button>`
+                        codigo: `<button (click)="darMeGusta()">❤️</button>`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: '<button',
+                                tipo: 'html',
+                                texto: 'PRESENTACIÓN: una etiqueta HTML, el botón que el usuario ve.'
+                            },
+                            {
+                                linea: 1,
+                                marca: '(click)="darMeGusta()"',
+                                tipo: 'evento',
+                                texto: 'Un evento: con el clic empieza el viaje. Se llama al método darMeGusta() del componente.'
+                            }
+                        ]
                     },
                     {
                         titulo: '2. Componente: le pasa el trabajo al servicio',
@@ -196,7 +343,21 @@ document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
                         codigo:
                             `darMeGusta() {
   this.servicioPublicacion.sumarMeGusta(this.idPublicacion);
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'darMeGusta()',
+                                tipo: 'metodo',
+                                texto: 'Un método del componente: recibe el clic.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'this.servicioPublicacion.sumarMeGusta(this.idPublicacion)',
+                                tipo: 'metodo',
+                                texto: 'Baja a la capa de LÓGICA DE NEGOCIO: el componente le pide el trabajo al servicio.'
+                            }
+                        ]
                     },
                     {
                         titulo: '3. Servicio: revisa la regla y llama a la API',
@@ -206,7 +367,27 @@ document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
                             `sumarMeGusta(id: number) {
   if (this.yaDioMeGusta(id)) { return; }
   return this.apiPublicacion.guardarMeGusta(id);
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'sumarMeGusta(id: number)',
+                                tipo: 'metodo',
+                                texto: 'LÓGICA DE NEGOCIO: el método del servicio. Recibe el id de la publicación (un número).'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'this.yaDioMeGusta(id)',
+                                tipo: 'metodo',
+                                texto: 'Revisa la regla del negocio: no se puede dar "me gusta" dos veces.'
+                            },
+                            {
+                                linea: 3,
+                                marca: 'this.apiPublicacion.guardarMeGusta(id)',
+                                tipo: 'metodo',
+                                texto: 'Baja a la capa de ACCESO A DATOS, la única que habla con la API.'
+                            }
+                        ]
                     },
                     {
                         titulo: '4. De vuelta: el componente actualiza la vista',
@@ -215,7 +396,41 @@ document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
                         codigo:
                             `.subscribe(respuesta => {
   this.totalMeGusta = respuesta.total;
-});`
+});`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: '.subscribe(',
+                                tipo: 'metodo',
+                                texto: 'subscribe espera la respuesta que SUBE desde la API.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'this.totalMeGusta',
+                                tipo: 'propiedad',
+                                texto: 'Se guarda el dato nuevo en una propiedad del componente, y la vista se actualiza sola.'
+                            }
+                        ]
+                    },
+                    {
+                        titulo: '5. La vista muestra el resultado',
+                        esCorrecto: true,
+                        archivo: 'publicacion.componente.html',
+                        codigo: `<p>{{ totalMeGusta }} me gusta</p>`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: '<p>',
+                                tipo: 'html',
+                                texto: 'Una etiqueta HTML: un párrafo.'
+                            },
+                            {
+                                linea: 1,
+                                marca: '{{ totalMeGusta }}',
+                                tipo: 'dato',
+                                texto: 'Muestra el total nuevo. El viaje terminó donde empezó: en la vista.'
+                            }
+                        ]
                     }
                 ],
                 guia: {
@@ -314,6 +529,7 @@ document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
 
             induccion: {
                 remitente: 'Tech Lead',
+                definicion: 'Respetar las capas significa que ninguna capa se salta a otra: el componente (presentación) solo habla con su servicio (lógica de negocio), y solo el servicio habla con la API o con el almacenamiento. Saltarse una capa crea un acoplamiento que hace el código difícil de cambiar.',
                 idea: 'En una arquitectura por capas, el componente solo habla con su servicio. Si el componente llama directo a la API o guarda datos por su cuenta, se está "saltando una capa".',
                 vidaReal: 'En un restaurante, el mesero toma tu pedido y se lo pasa a la cocina. Si el mesero entra a la bodega a sacar ingredientes él mismo, la cocina pierde el control: nadie sabe qué se gastó, y cuando algo falte nadie sabrá por qué. Cada uno hace su parte y le pide al siguiente.',
                 ejemplos: [
@@ -322,24 +538,112 @@ document.body.innerHTML = '<h1>' + usuario.nombre + '</h1>';       // pantalla`
                         esCorrecto: false,
                         archivo: 'pedidos.componente.ts',
                         codigo:
-                            `constructor(private http: HttpClient) {}
+                            `export class PedidosComponente {
+  pedidos: Pedido[] = [];
 
-cargar() {
-  this.http.get('/api/pedidos')
-    .subscribe(datos => this.pedidos = datos);
-}`
+  constructor(private http: HttpClient) {}
+
+  cargar() {
+    this.http.get<Pedido[]>('/api/pedidos')
+      .subscribe(datos => this.pedidos = datos);
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'class PedidosComponente',
+                                tipo: 'clase',
+                                texto: 'La clase del componente: es la capa de PRESENTACIÓN.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'pedidos',
+                                tipo: 'propiedad',
+                                texto: 'Una propiedad que guarda la lista de pedidos que se ve en pantalla.'
+                            },
+                            {
+                                linea: 4,
+                                marca: 'private http: HttpClient',
+                                tipo: 'problema',
+                                texto: 'El componente pide HttpClient: se está preparando para hablar directo con la API.'
+                            },
+                            {
+                                linea: 7,
+                                marca: "this.http.get<Pedido[]>('/api/pedidos')",
+                                tipo: 'problema',
+                                texto: 'El atajo: la presentación llama a la API saltándose la capa de lógica (el servicio).'
+                            }
+                        ]
                     },
                     {
                         titulo: 'Sin atajo: el componente le pide al servicio',
                         esCorrecto: true,
                         archivo: 'pedidos.componente.ts',
                         codigo:
-                            `constructor(private pedidoServicio: PedidoServicio) {}
+                            `export class PedidosComponente {
+  pedidos: Pedido[] = [];
 
-cargar() {
-  this.pedidoServicio.obtenerPedidos()
-    .subscribe(datos => this.pedidos = datos);
-}`
+  constructor(private pedidoServicio: PedidoServicio) {}
+
+  cargar() {
+    this.pedidoServicio.obtenerPedidos()
+      .subscribe(datos => this.pedidos = datos);
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 4,
+                                marca: 'constructor',
+                                tipo: 'constructor',
+                                texto: 'El constructor: aquí el componente pide lo que necesita. Pide su servicio, no HttpClient.'
+                            },
+                            {
+                                linea: 7,
+                                marca: 'this.pedidoServicio.obtenerPedidos()',
+                                tipo: 'metodo',
+                                texto: 'Le pide los datos a la capa de abajo. Cómo los consigue es problema del servicio.'
+                            },
+                            {
+                                linea: 8,
+                                marca: '.subscribe(',
+                                tipo: 'metodo',
+                                texto: 'Espera la respuesta igual que antes: esto no cambia.'
+                            }
+                        ]
+                    },
+                    {
+                        titulo: 'El servicio es el que habla con la API',
+                        esCorrecto: true,
+                        archivo: 'pedido.servicio.ts',
+                        codigo:
+                            `@Injectable({ providedIn: 'root' })
+export class PedidoServicio {
+  constructor(private http: HttpClient) {}
+
+  obtenerPedidos() {
+    return this.http.get<Pedido[]>('/api/pedidos');
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 2,
+                                marca: 'class PedidoServicio',
+                                tipo: 'clase',
+                                texto: 'La clase del servicio: la capa de LÓGICA y ACCESO A DATOS.'
+                            },
+                            {
+                                linea: 3,
+                                marca: 'private http: HttpClient',
+                                tipo: 'inyeccion',
+                                texto: 'Aquí sí: en un servicio, pedir HttpClient es correcto.'
+                            },
+                            {
+                                linea: 6,
+                                marca: "this.http.get<Pedido[]>('/api/pedidos')",
+                                tipo: 'metodo',
+                                texto: 'La llamada a la API ahora está en su lugar.'
+                            }
+                        ]
                     }
                 ],
                 guia: {
@@ -500,6 +804,7 @@ export class PerfilComponente implements OnInit {
 
             induccion: {
                 remitente: 'Tech Lead',
+                definicion: 'El Principio de Responsabilidad Única (SRP, la S de SOLID) dice que una clase debe tener una sola responsabilidad, es decir, una sola razón para cambiar. Si una clase hace varios trabajos, un cambio en uno de ellos puede romper los demás.',
                 idea: 'Cada clase debe tener un solo trabajo. Si para explicar lo que hace una clase tienes que decir "y… y… y…", tiene demasiadas responsabilidades y hay que repartirlas.',
                 vidaReal: 'En una panadería, el panadero hornea, el cajero cobra y el domiciliario entrega. Si el panadero también cobra y sale a hacer domicilios, se le quema el pan. Y si cambia la forma de pago, hay que volver a entrenar al panadero. Cuando cada uno tiene un solo trabajo, un cambio solo afecta a una persona.',
                 ejemplos: [
@@ -515,16 +820,40 @@ import { HttpClient } from '@angular/common/http';
 export class UsuarioServicio {
   constructor(private http: HttpClient) {}
 
-  // Trabajo 1: registrar usuarios ✅
   registrar(nombre: string, correo: string) {
     return this.http.post('/api/usuarios', { nombre, correo });
   }
 
-  // Trabajo 2: enviar correos ❌ no es de aquí
   enviarBienvenida(correo: string) {
     return this.http.post('/api/correos', { para: correo, asunto: 'Bienvenido' });
   }
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 5,
+                                marca: 'class UsuarioServicio',
+                                tipo: 'clase',
+                                texto: 'Una clase que debería tener UN solo trabajo: manejar usuarios.'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'constructor',
+                                tipo: 'constructor',
+                                texto: 'Pide HttpClient para hablar con la API. Esto está bien.'
+                            },
+                            {
+                                linea: 8,
+                                marca: 'registrar(nombre: string, correo: string)',
+                                tipo: 'metodo',
+                                texto: 'Trabajo 1: registrar usuarios. Este sí es su trabajo.'
+                            },
+                            {
+                                linea: 12,
+                                marca: 'enviarBienvenida(correo: string)',
+                                tipo: 'problema',
+                                texto: 'Trabajo 2: enviar correos. Es otra responsabilidad: si cambia el proveedor de correos, habría que tocar el servicio de usuarios.'
+                            }
+                        ]
                     },
                     {
                         titulo: 'Después (1 de 2): solo registra usuarios',
@@ -541,7 +870,21 @@ export class UsuarioServicio {
   registrar(nombre: string, correo: string) {
     return this.http.post('/api/usuarios', { nombre, correo });
   }
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 5,
+                                marca: 'class UsuarioServicio',
+                                tipo: 'clase',
+                                texto: 'Ahora la clase solo maneja usuarios.'
+                            },
+                            {
+                                linea: 8,
+                                marca: 'registrar(nombre: string, correo: string)',
+                                tipo: 'metodo',
+                                texto: 'Su único trabajo. Si cambian los correos, esta clase ni se entera.'
+                            }
+                        ]
                     },
                     {
                         titulo: 'Después (2 de 2): solo envía correos',
@@ -558,7 +901,21 @@ export class CorreoServicio {
   enviar(para: string, asunto: string) {
     return this.http.post('/api/correos', { para, asunto });
   }
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 5,
+                                marca: 'class CorreoServicio',
+                                tipo: 'clase',
+                                texto: 'Una clase nueva con un solo trabajo: enviar correos.'
+                            },
+                            {
+                                linea: 8,
+                                marca: 'enviar(para: string, asunto: string)',
+                                tipo: 'metodo',
+                                texto: 'Sirve para cualquier correo, no solo el de bienvenida.'
+                            }
+                        ]
                     }
                 ],
                 guia: {
@@ -801,6 +1158,7 @@ export class CarritoComponente {
 
             induccion: {
                 remitente: 'Tech Lead',
+                definicion: 'Una interface es un contrato que define qué propiedades y métodos debe tener una clase, sin decir cómo se implementan. Las clases la cumplen con implements, y así se pueden usar en el mismo lugar sin importar cuál sea.',
                 idea: 'Una interface es un contrato: dice QUÉ debe tener una clase (sus propiedades y métodos), pero no CÓMO lo hace. Cualquier clase que firme el contrato con implements se puede usar en el mismo lugar.',
                 vidaReal: 'Los enchufes de tu casa son un contrato: dos patas con cierta forma. Al enchufe no le importa si conectas una licuadora, un cargador o un televisor: si cumple la forma, funciona. Y cuando compras un aparato nuevo, no tienes que cambiar el enchufe de la pared.',
                 ejemplos: [
@@ -811,7 +1169,27 @@ export class CarritoComponente {
                             `export interface Exportador {
   formato: string;
   exportar(datos: string[]): string;
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'interface Exportador',
+                                tipo: 'interface',
+                                texto: 'Esto es una interface llamada Exportador: un contrato. Dice qué debe tener todo exportador, pero no tiene código adentro.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'formato: string',
+                                tipo: 'propiedad',
+                                texto: 'Una propiedad que todo exportador debe tener: el nombre del formato (texto).'
+                            },
+                            {
+                                linea: 3,
+                                marca: 'exportar(datos: string[])',
+                                tipo: 'metodo',
+                                texto: 'Un método que todo exportador debe tener. Recibe una lista de textos y devuelve un texto.'
+                            }
+                        ]
                     },
                     {
                         titulo: 'Clase que cumple el contrato',
@@ -826,7 +1204,33 @@ export class ExportadorExcel implements Exportador {
   exportar(datos: string[]): string {
     return datos.join(';');
   }
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 3,
+                                marca: 'class ExportadorExcel',
+                                tipo: 'clase',
+                                texto: 'Una clase: esta sí hace el trabajo de exportar.'
+                            },
+                            {
+                                linea: 3,
+                                marca: 'implements Exportador',
+                                tipo: 'interface',
+                                texto: 'implements = "firmo el contrato". Ahora la clase está obligada a tener formato y exportar().'
+                            },
+                            {
+                                linea: 4,
+                                marca: "formato = 'Excel'",
+                                tipo: 'propiedad',
+                                texto: 'Cumple la propiedad que pide el contrato.'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'exportar(datos: string[])',
+                                tipo: 'metodo',
+                                texto: 'Cumple el método que pide el contrato, a su manera: separa los datos con punto y coma.'
+                            }
+                        ]
                     },
                     {
                         titulo: 'Otra clase que cumple el mismo contrato',
@@ -841,7 +1245,21 @@ export class ExportadorPdf implements Exportador {
   exportar(datos: string[]): string {
     return 'PDF con ' + datos.length + ' filas';
   }
-}`
+}`,
+                        anotaciones: [
+                            {
+                                linea: 3,
+                                marca: 'implements Exportador',
+                                tipo: 'interface',
+                                texto: 'Firma el mismo contrato que ExportadorExcel.'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'exportar(datos: string[])',
+                                tipo: 'metodo',
+                                texto: 'El mismo método, pero por dentro hace otra cosa. El contrato dice QUÉ; cada clase decide CÓMO.'
+                            }
+                        ]
                     },
                     {
                         titulo: 'Clase que NO cumple el contrato',
@@ -853,14 +1271,33 @@ export class ExportadorPdf implements Exportador {
 export class ExportadorWord implements Exportador {
   formato = 'Word';
 
-  // ❌ El contrato pide exportar(), no descargar()
   descargar(datos: string[]): string {
     return 'Word con ' + datos.length + ' filas';
   }
 }
 
 // TypeScript avisa ANTES de ejecutar:
-// "La clase ExportadorWord no implementa 'exportar'"`
+// "La clase ExportadorWord no implementa 'exportar'"`,
+                        anotaciones: [
+                            {
+                                linea: 3,
+                                marca: 'implements Exportador',
+                                tipo: 'interface',
+                                texto: 'Dice que firma el contrato…'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'descargar(datos: string[])',
+                                tipo: 'problema',
+                                texto: '…pero el método se llama descargar, y el contrato pide exportar. No cumple el contrato.'
+                            },
+                            {
+                                linea: 12,
+                                marca: 'La clase ExportadorWord no implementa',
+                                tipo: 'problema',
+                                texto: 'TypeScript muestra el error ANTES de ejecutar la app. Esa es la gran ventaja de los contratos.'
+                            }
+                        ]
                     },
                     {
                         titulo: 'Quien usa el contrato no sabe ni le importa cuál clase es',
@@ -874,7 +1311,27 @@ export class ExportadorWord implements Exportador {
 
 // Sirve igual con:
 // this.descargar(new ExportadorExcel());
-// this.descargar(new ExportadorPdf());`
+// this.descargar(new ExportadorPdf());`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'exportador: Exportador',
+                                tipo: 'interface',
+                                texto: 'El dato que recibe es del tipo del contrato: acepta Excel, PDF o cualquiera que lo cumpla.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'const archivo',
+                                tipo: 'variable',
+                                texto: 'Una variable que guarda lo que devolvió exportar().'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'exportador.exportar(this.filas)',
+                                tipo: 'metodo',
+                                texto: 'Llama al método del contrato sin saber cuál exportador le llegó.'
+                            }
+                        ]
                     }
                 ],
                 guia: {
@@ -1062,6 +1519,7 @@ export class PagoPse implements MetodoPago {
 
             induccion: {
                 remitente: 'Tech Lead',
+                definicion: 'La inyección de dependencias es una técnica en la que una clase recibe desde afuera, normalmente por su constructor, los objetos que necesita, en lugar de crearlos ella misma con new. Se relaciona con la D de SOLID (inversión de dependencias): depender de abstracciones y no de clases concretas.',
                 idea: 'Inyección de dependencias: una clase NO crea con new las cosas que necesita, sino que las PIDE en su constructor. Así, quien la usa decide qué entregarle, y la clase no queda amarrada a una sola opción.',
                 vidaReal: 'Un taxista no fabrica su propio carro: la empresa se lo entrega. Hoy le dan uno a gasolina y mañana uno eléctrico, y el taxista maneja igual porque sabe usar "un carro". Si él mismo soldara su carro, cambiarlo significaría volver a construirlo.',
                 ejemplos: [
@@ -1410,6 +1868,7 @@ export class CajaComponente {
 
             induccion: {
                 remitente: 'Tech Lead',
+                definicion: 'Singleton es un patrón de diseño creacional que garantiza que una clase tenga una sola instancia en toda la aplicación y ofrece un punto de acceso global a ella. En Angular se logra con @Injectable({ providedIn: \'root\' }).',
                 idea: 'Patrón Singleton: de una clase existe UNA SOLA instancia (un solo objeto) para toda la aplicación, y todos los que la necesitan comparten esa misma. Sirve para lo que debe ser único: el carrito, la sesión del usuario o la configuración.',
                 vidaReal: 'En una casa hay una sola nevera. Si cada persona tuviera su propia nevera, tu mamá guardaría la leche en la suya y tú abrirías la tuya y dirías "no hay leche". La leche existe, pero está en otra nevera. Ese es justo el bug del ticket: dos carritos distintos.',
                 ejemplos: [
@@ -1783,12 +2242,371 @@ export class PaginaCarritoComponente {
             id: 8,
             misionId: 3,
             titulo: 'Fábrica de notificaciones',
-            descripcion: 'Completa la fábrica que crea cada tipo de notificación.',
+            descripcion: 'Centraliza en una fábrica la creación de notificaciones por correo, SMS y WhatsApp.',
             tipoJuego: 'completar-codigo',
             dificultad: 'media',
             puntos: 200,
-            concepto: 'Patrón Factory',
-            contexto: 'Cada pantalla crea sus propias alertas con un if gigante. Centraliza la creación en una fábrica.'
+            concepto: 'Patrón Factory (fábrica)',
+            contexto: 'Cada pantalla decide con un if gigante si avisa por correo, SMS o WhatsApp, y ese if está copiado en 5 pantallas. Ahora llega Telegram y nadie quiere tocar las 5. Centraliza la creación en una fábrica.',
+            evidencia: 'GP-ARQ-05',
+
+            induccion: {
+                remitente: 'Tech Lead',
+                definicion: 'Factory (fábrica) es un patrón de diseño creacional que centraliza la creación de objetos en una clase o método: quien necesita un objeto lo pide indicando el tipo, y la fábrica decide qué clase concreta crear y la devuelve como su interface.',
+                idea: 'Patrón Factory (fábrica): en lugar de que cada parte del código decida con if y new qué objeto crear, se le pide a una sola clase, la fábrica: "dame uno de este tipo". La fábrica decide qué clase crear y lo devuelve.',
+                vidaReal: 'En un restaurante tú no entras a la cocina a preparar tu plato: le pides al mesero "una bandeja paisa" y la cocina decide cómo hacerla. Si cambia la receta, cambia la cocina, no los clientes. La fábrica es la cocina: todos piden ahí y nadie más cocina.',
+                ejemplos: [
+                    {
+                        titulo: 'El contrato de todos los transportes',
+                        archivo: 'transporte.ts',
+                        codigo:
+                            `export interface Transporte {
+  nombre: string;
+  entregar(direccion: string): string;
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'interface Transporte',
+                                tipo: 'interface',
+                                texto: 'El contrato: todo transporte de domicilios (moto, bici, carro) debe tener un nombre y un método entregar().'
+                            },
+                            {
+                                linea: 3,
+                                marca: 'entregar(direccion: string)',
+                                tipo: 'metodo',
+                                texto: 'El método que todos los transportes deben tener. Recibe la dirección y devuelve un texto.'
+                            }
+                        ]
+                    },
+                    {
+                        titulo: 'Cada pantalla decide y crea con if y new',
+                        esCorrecto: false,
+                        archivo: 'pedido.componente.ts',
+                        codigo:
+                            `enviarPedido(tipo: string, direccion: string) {
+  let transporte: Transporte;
+  if (tipo === 'moto') {
+    transporte = new EnvioMoto();
+  } else if (tipo === 'bici') {
+    transporte = new EnvioBici();
+  } else {
+    transporte = new EnvioCarro();
+  }
+  this.mensaje = transporte.entregar(direccion);
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'enviarPedido(tipo: string, direccion: string)',
+                                tipo: 'metodo',
+                                texto: 'Esto es un método del componente: se ejecuta cuando el usuario pide un domicilio.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'let transporte',
+                                tipo: 'variable',
+                                texto: 'Una variable que va a guardar el transporte elegido.'
+                            },
+                            {
+                                linea: 3,
+                                marca: "if (tipo === 'moto')",
+                                tipo: 'problema',
+                                texto: 'Este if decide QUÉ clase crear. Si está copiado en 5 pantallas y llega "drone", hay que cambiar las 5.'
+                            },
+                            {
+                                linea: 4,
+                                marca: 'new EnvioMoto()',
+                                tipo: 'problema',
+                                texto: 'El componente conoce y crea con new todas las clases concretas. Queda amarrado a ellas.'
+                            },
+                            {
+                                linea: 10,
+                                marca: 'transporte.entregar(direccion)',
+                                tipo: 'metodo',
+                                texto: 'Esta parte sí está bien: usa el método del contrato. Lo malo es todo lo de arriba.'
+                            }
+                        ]
+                    },
+                    {
+                        titulo: 'Una fábrica que sabe crear transportes',
+                        esCorrecto: true,
+                        archivo: 'fabrica-transporte.ts',
+                        codigo:
+                            `export class FabricaTransporte {
+  static crear(tipo: string): Transporte {
+    if (tipo === 'moto') {
+      return new EnvioMoto();
+    }
+    if (tipo === 'bici') {
+      return new EnvioBici();
+    }
+    return new EnvioCarro();
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 1,
+                                marca: 'class FabricaTransporte',
+                                tipo: 'clase',
+                                texto: 'Esto es la fábrica: una clase cuyo ÚNICO trabajo es crear transportes.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'static crear(tipo: string)',
+                                tipo: 'metodo',
+                                texto: 'El método que fabrica. Con static se usa sin crear la fábrica: FabricaTransporte.crear(\'moto\').'
+                            },
+                            {
+                                linea: 2,
+                                marca: ': Transporte',
+                                tipo: 'interface',
+                                texto: 'Devuelve el contrato Transporte, no una clase concreta. Quien pide no sabe cuál le tocó, y no le importa.'
+                            },
+                            {
+                                linea: 4,
+                                marca: 'new EnvioMoto()',
+                                tipo: 'clase',
+                                texto: 'Los new viven SOLO aquí. Si llega "drone", se agrega un if en este único archivo.'
+                            }
+                        ]
+                    },
+                    {
+                        titulo: 'La pantalla solo pide',
+                        esCorrecto: true,
+                        archivo: 'pedido.componente.ts',
+                        codigo:
+                            `enviarPedido(tipo: string, direccion: string) {
+  const transporte = FabricaTransporte.crear(tipo);
+  this.mensaje = transporte.entregar(direccion);
+}`,
+                        anotaciones: [
+                            {
+                                linea: 2,
+                                marca: 'const transporte',
+                                tipo: 'variable',
+                                texto: 'La variable guarda lo que entregó la fábrica.'
+                            },
+                            {
+                                linea: 2,
+                                marca: 'FabricaTransporte.crear(tipo)',
+                                tipo: 'metodo',
+                                texto: 'Le pide a la fábrica: "dame un transporte de este tipo". El componente ya no tiene if ni new.'
+                            },
+                            {
+                                linea: 3,
+                                marca: 'transporte.entregar(direccion)',
+                                tipo: 'metodo',
+                                texto: 'Usa el contrato. Funciona con moto, bici, carro o el que llegue mañana.'
+                            }
+                        ]
+                    }
+                ],
+                guia: {
+                    titulo: 'Señales de que necesitas una fábrica',
+                    columnas: ['Si ves…', '¿Qué pasa?', '¿Qué hacer?'],
+                    filas: [
+                        ['El mismo if/else para crear objetos en varias pantallas', 'Código repetido', 'Moverlo a una fábrica'],
+                        ['new ClaseConcreta() dentro de un componente', 'El componente conoce todas las clases', 'Pedírselo a la fábrica'],
+                        ['fabrica.crear(tipo)', 'Otro decide qué clase crear', '✅ Patrón Factory'],
+                        ['crear(...): UnContrato', 'La fábrica devuelve el contrato', '✅ Quien pide no sabe cuál le tocó'],
+                        ['Llega un tipo nuevo', 'Se cambia solo la fábrica', '✅ Un solo lugar para cambiar']
+                    ]
+                },
+                notaAngular: 'En Angular, la fábrica suele ser un servicio: @Injectable({ providedIn: \'root\' }) con un método crear(). Así la pides en el constructor como cualquier servicio (reto 6) y existe una sola para toda la app (reto 7).',
+                objetivo: 'Completa los 7 espacios para que la fábrica cree las notificaciones y la pantalla de pedidos se las pida, sin if ni new.',
+                comoJugar: [
+                    'notificacion.ts y canales.ts ya existen: úsalos de guía. pedidos.componente.ts (antes) muestra el if gigante que vas a eliminar.',
+                    'Toca un espacio vacío y luego la pieza que va ahí. Las piezas están en la barra de abajo.',
+                    'Para quitar una pieza, toca el espacio otra vez. Ojo: hay piezas de más.',
+                    'Cuando llenes todos los espacios, pulsa Verificar. Si alguno está mal, verás una ayuda en rojo.'
+                ]
+            },
+
+            pistas: [
+                'Los espacios 3 y 4 necesitan crear objetos reales con new: mira los nombres de las clases en canales.ts.',
+                'El componente pide la fábrica en el constructor y luego usa dos métodos: uno de la fábrica (para crear) y uno del contrato (para enviar).'
+            ],
+
+            explicacionFinal: 'Acabas de aplicar el patrón Factory.\n\nAntes, cada pantalla tenía su propio if con new para decidir el canal. Ahora existe UNA fábrica que sabe crear notificaciones, y las pantallas solo le dicen qué canal quieren: this.fabrica.crear(canal).\n\n¿Llega Telegram? Se crea NotificacionTelegram y se agrega un if en la fábrica. Las pantallas de pedidos y facturas no cambian ni una línea.\n\nFíjate que este reto usó todo lo anterior: el contrato Notificacion (reto 5), la fábrica pedida en el constructor (reto 6) y una sola fábrica para toda la app con providedIn: \'root\' (reto 7).',
+
+            completarCodigo: {
+                archivos: [
+                    {
+                        archivo: 'notificacion.ts',
+                        nota: 'El contrato · ya existe',
+                        codigo:
+                            `export interface Notificacion {
+  canal: string;
+  enviar(mensaje: string): string;
+}`
+                    },
+                    {
+                        archivo: 'canales.ts',
+                        nota: 'Ya existen · úsalos de guía',
+                        codigo:
+                            `import { Notificacion } from './notificacion';
+
+export class NotificacionCorreo implements Notificacion {
+  canal = 'Correo';
+  enviar(mensaje: string): string {
+    return '📧 Correo enviado: ' + mensaje;
+  }
+}
+
+export class NotificacionSms implements Notificacion {
+  canal = 'SMS';
+  enviar(mensaje: string): string {
+    return '📱 SMS enviado: ' + mensaje;
+  }
+}
+
+export class NotificacionWhatsapp implements Notificacion {
+  canal = 'WhatsApp';
+  enviar(mensaje: string): string {
+    return '💬 WhatsApp enviado: ' + mensaje;
+  }
+}`
+                    },
+                    {
+                        archivo: 'pedidos.componente.ts (antes)',
+                        nota: 'Así estaba: un if en cada pantalla',
+                        codigo:
+                            `avisarCliente(canal: string, mensaje: string) {
+  let notificacion: Notificacion;
+  if (canal === 'correo') {
+    notificacion = new NotificacionCorreo();
+  } else if (canal === 'sms') {
+    notificacion = new NotificacionSms();
+  } else {
+    notificacion = new NotificacionWhatsapp();
+  }
+  this.estado = notificacion.enviar(mensaje);
+}`
+                    },
+                    {
+                        archivo: 'notificacion.fabrica.ts',
+                        codigo:
+                            `import { Injectable } from '@angular/core';
+import { Notificacion } from './notificacion';
+import { NotificacionCorreo, NotificacionSms, NotificacionWhatsapp } from './canales';
+
+@Injectable({ providedIn: [[1]] })
+export class NotificacionFabrica {
+
+  crear(canal: string): [[2]] {
+    if (canal === 'correo') {
+      return [[3]];
+    }
+    if (canal === 'sms') {
+      return [[4]];
+    }
+    return new NotificacionWhatsapp();
+  }
+}`
+                    },
+                    {
+                        archivo: 'pedidos.componente.ts (ahora)',
+                        codigo:
+                            `import { Component } from '@angular/core';
+import { NotificacionFabrica } from '../notificaciones/notificacion.fabrica';
+
+@Component({
+  selector: 'app-pedidos',
+  templateUrl: './pedidos.componente.html'
+})
+export class PedidosComponente {
+  estado = '';
+
+  constructor(private fabrica: [[5]]) {}
+
+  avisarCliente(canal: string, mensaje: string) {
+    const notificacion = this.fabrica.[[6]](canal);
+    this.estado = notificacion.[[7]](mensaje);
+  }
+}`
+                    }
+                ],
+                huecos: [
+                    {
+                        id: 1,
+                        respuesta: "'root'",
+                        ayuda: 'Recuerda el reto 7: queremos UNA sola fábrica para toda la app. ¿Qué va después de providedIn?',
+                        explicacion: "providedIn: 'root' hace que exista una sola fábrica (Singleton) y que cualquier componente pueda pedirla."
+                    },
+                    {
+                        id: 2,
+                        respuesta: 'Notificacion',
+                        ayuda: 'La fábrica puede devolver correo, SMS o WhatsApp. ¿Qué tipo describe a los tres? No es una clase concreta.',
+                        explicacion: 'crear() devuelve el contrato Notificacion. Quien pide no sabe qué canal le tocó, y no le importa.'
+                    },
+                    {
+                        id: 3,
+                        respuesta: 'new NotificacionCorreo()',
+                        ayuda: 'Si el canal es "correo", la fábrica debe CREAR un objeto real. Mira las clases de canales.ts. Ojo: un contrato no se puede crear con new.',
+                        explicacion: 'Aquí sí se usa new: la fábrica es el ÚNICO lugar donde se crean los canales.'
+                    },
+                    {
+                        id: 4,
+                        respuesta: 'new NotificacionSms()',
+                        ayuda: '¿Qué clase de canales.ts corresponde a "sms"?',
+                        explicacion: 'Cada if de la fábrica crea un canal distinto. Si mañana cambia cómo se crea el SMS, solo se toca esta línea.'
+                    },
+                    {
+                        id: 5,
+                        respuesta: 'NotificacionFabrica',
+                        ayuda: 'El componente no crea la fábrica: la pide en el constructor (reto 6). ¿Qué tipo pide?',
+                        explicacion: 'El componente pide la fábrica por inyección de dependencias. Sin new: Angular se la entrega.'
+                    },
+                    {
+                        id: 6,
+                        respuesta: 'crear',
+                        ayuda: '¿Cómo se llama el método de la fábrica que fabrica notificaciones? Míralo en notificacion.fabrica.ts.',
+                        explicacion: 'this.fabrica.crear(canal) reemplaza todo el if gigante: el componente solo dice qué canal quiere.'
+                    },
+                    {
+                        id: 7,
+                        respuesta: 'enviar',
+                        ayuda: '¿Qué método garantiza el contrato Notificacion?',
+                        explicacion: 'Lo que devuelve la fábrica cumple el contrato, así que siempre tiene enviar().'
+                    }
+                ],
+                distractores: ['NotificacionCorreo', 'new Notificacion()', 'void', 'new NotificacionFabrica()', 'avisar'],
+                archivosExtra: [
+                    {
+                        archivo: 'facturas.componente.ts',
+                        nota: 'Otra pantalla, la misma fábrica',
+                        codigo:
+                            `export class FacturasComponente {
+  constructor(private fabrica: NotificacionFabrica) {}
+
+  avisarFactura(canal: string) {
+    const notificacion = this.fabrica.crear(canal);
+    return notificacion.enviar('Tu factura está lista');
+  }
+}`
+                    },
+                    {
+                        archivo: 'notificacion.fabrica.ts (con Telegram)',
+                        nota: '¿Y si llega Telegram?',
+                        codigo:
+                            `crear(canal: string): Notificacion {
+  if (canal === 'correo') {
+    return new NotificacionCorreo();
+  }
+  if (canal === 'sms') {
+    return new NotificacionSms();
+  }
+  if (canal === 'telegram') {          // ← Solo se agrega esto
+    return new NotificacionTelegram();
+  }
+  return new NotificacionWhatsapp();
+}
+
+// Las pantallas de pedidos y facturas NO cambian.`
+                    }
+                ]
+            }
         },
 
         // ===================== MISIÓN 4 =====================
@@ -1800,11 +2618,694 @@ export class PaginaCarritoComponente {
             tipoJuego: 'revisar-codigo',
             dificultad: 'dificil',
             puntos: 300,
-            concepto: 'Integración: MVC, capas, SOLID y patrones',
-            contexto: 'Antes de salir a producción, el módulo de pedidos necesita tu revisión. Tiene errores de todo lo que has aprendido. Encuéntralos todos.'
+            concepto: 'Revisión de código (MVC, capas, SOLID y patrones)',
+            contexto: 'Antes de salir a producción, el módulo de pedidos necesita tu aprobación. El código funciona, pero tiene errores de diseño de todo lo que has aprendido. Encuéntralos todos: si se te escapa uno, llega a producción.',
+            evidencia: 'GP-ARQ-05',
+
+            induccion: {
+                remitente: 'Tech Lead',
+                definicion: 'La revisión de código (code review) es la práctica de examinar el código de un compañero antes de unirlo al proyecto, para detectar errores de diseño, de arquitectura y de buenas prácticas. Un buen revisor no solo verifica que el código funcione: verifica que respete la arquitectura (MVC y capas), los principios SOLID y los patrones de diseño.',
+                idea: 'Revisar código es leer el trabajo de otro con una lista de chequeo en la mano. No basta con que funcione: tiene que estar bien organizado para que mañana se pueda cambiar sin romper nada.',
+                vidaReal: 'Antes de entregar una casa, un interventor la revisa con una lista: ¿las tuberías van por donde deben?, ¿los cables están bien conectados?, ¿la estructura aguanta? La casa puede "funcionar" y aun así tener fallas que saldrán caras después. En este reto, tú eres el interventor del código.',
+                ejemplos: [
+                    {
+                        titulo: 'Un componente con varios errores a la vez',
+                        esCorrecto: false,
+                        archivo: 'perfil.componente.ts',
+                        codigo:
+                            `@Component({
+  selector: 'app-perfil',
+  templateUrl: './perfil.componente.html',
+  providers: [UsuarioServicio]
+})
+export class PerfilComponente {
+  private correo = new CorreoServicio();
+
+  constructor(private http: HttpClient) {}
+
+  cargar() {
+    return this.http.get('/api/usuarios/7');
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 4,
+                                marca: 'providers: [UsuarioServicio]',
+                                tipo: 'problema',
+                                texto: 'Singleton (reto 7): con providers el componente se fabrica su propia copia del servicio.'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'class PerfilComponente',
+                                tipo: 'clase',
+                                texto: 'La clase del componente que vamos a revisar.'
+                            },
+                            {
+                                linea: 7,
+                                marca: 'new CorreoServicio()',
+                                tipo: 'problema',
+                                texto: 'Inyección de dependencias (reto 6): crea su dependencia con new en vez de pedirla.'
+                            },
+                            {
+                                linea: 9,
+                                marca: 'private http: HttpClient',
+                                tipo: 'problema',
+                                texto: 'Capas (reto 3): un componente que pide HttpClient se está preparando para saltarse el servicio.'
+                            },
+                            {
+                                linea: 12,
+                                marca: "this.http.get('/api/usuarios/7')",
+                                tipo: 'problema',
+                                texto: 'Capas (reto 3): aquí está el atajo. El componente llama a la API directamente.'
+                            }
+                        ]
+                    },
+                    {
+                        titulo: 'El mismo componente, revisado',
+                        esCorrecto: true,
+                        archivo: 'perfil.componente.ts',
+                        codigo:
+                            `@Component({
+  selector: 'app-perfil',
+  templateUrl: './perfil.componente.html'
+})
+export class PerfilComponente {
+  constructor(private usuarioServicio: UsuarioServicio) {}
+
+  cargar() {
+    return this.usuarioServicio.obtenerUsuario(7);
+  }
+}`,
+                        anotaciones: [
+                            {
+                                linea: 6,
+                                marca: 'constructor',
+                                tipo: 'constructor',
+                                texto: 'Pide lo que necesita (reto 6). Sin providers, recibe la única instancia del servicio (reto 7).'
+                            },
+                            {
+                                linea: 6,
+                                marca: 'usuarioServicio: UsuarioServicio',
+                                tipo: 'inyeccion',
+                                texto: 'La dependencia llega desde afuera: Angular se la entrega.'
+                            },
+                            {
+                                linea: 9,
+                                marca: 'this.usuarioServicio.obtenerUsuario(7)',
+                                tipo: 'metodo',
+                                texto: 'Habla solo con su servicio (reto 3), y cada clase hace un solo trabajo (reto 4).'
+                            }
+                        ]
+                    }
+                ],
+                guia: {
+                    titulo: 'Lista de chequeo del revisor',
+                    columnas: ['Pregúntate en cada archivo…', 'Tema', 'Si la respuesta es NO…'],
+                    filas: [
+                        ['¿El componente solo muestra y coordina, sin reglas de negocio?', 'MVC · reto 1', 'Mueve la regla al servicio o al modelo'],
+                        ['¿El componente habla solo con su servicio (sin HttpClient ni localStorage)?', 'Capas · retos 2 y 3', 'Mueve el acceso a datos al servicio'],
+                        ['¿Cada clase tiene un solo trabajo?', 'SRP · reto 4', 'Sepáralo en otro servicio'],
+                        ['¿Las clases piden sus dependencias en vez de crearlas con new?', 'Inyección · retos 5 y 6', 'Pídelas en el constructor'],
+                        ['¿Los servicios compartidos existen una sola vez?', 'Singleton · reto 7', 'Usa providedIn: \'root\' y quita providers'],
+                        ['¿La creación de objetos por tipo está en un solo lugar?', 'Factory · reto 8', 'Usa la fábrica en vez del if']
+                    ]
+                },
+                notaAngular: 'En los equipos reales nadie sube código a la rama principal sin que otro lo revise en un Pull Request. GitHub y GitLab muestran los cambios línea por línea y el revisor deja comentarios, igual que en este reto.',
+                objetivo: 'Revisa los 3 archivos del Pull Request #42 y marca los 6 problemas de diseño antes de que lleguen a producción.',
+                comoJugar: [
+                    'Este Pull Request tiene 3 archivos y 6 problemas. Cada problema es de un tema distinto que ya viste.',
+                    'Usa la lista de chequeo: pasa cada pregunta por cada archivo.',
+                    'Haz clic en una línea para marcarla. Si todo un método o un bloque sobra, basta con marcar una de sus líneas.',
+                    'Pulsa Enviar revisión. Te diremos cuántos problemas te faltan, pero no cuáles.'
+                ]
+            },
+
+            pistas: [
+                'pedidos.componente.ts tiene 3 problemas, pedido.servicio.ts tiene 2 y avisos.componente.ts tiene 1.',
+                'Busca: providers, localStorage, un cálculo de descuento, un new, un método que genera un PDF y un if que decide qué notificación crear.'
+            ],
+
+            explicacionFinal: 'Acabas de hacer una revisión de código completa, como un desarrollador senior.\n\nEncontraste 6 problemas, cada uno de un tema de la ruta: la regla del descuento estaba en la vista (MVC), el componente guardaba datos con localStorage (capas), el servicio también generaba reportes (SRP), creaba su notificador con new (inyección de dependencias), el componente se fabricaba su propio servicio con providers (Singleton) y otra pantalla repetía el if en vez de usar la fábrica (Factory).\n\nNinguno de estos errores hacía que la app fallara hoy. Pero todos la hacían difícil de cambiar mañana. Ver eso a tiempo es lo que hace un arquitecto de software.\n\n¡Terminaste la ruta de Code Architect!',
+
+            revisarCodigo: {
+                archivos: [
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        codigo:
+                            `import { Component, OnInit } from '@angular/core';
+import { PedidoServicio } from '../servicios/pedido.servicio';
+import { Pedido } from '../modelos/pedido.modelo';
+
+@Component({
+  selector: 'app-pedidos',
+  templateUrl: './pedidos.componente.html',
+  providers: [PedidoServicio]
+})
+export class PedidosComponente implements OnInit {
+  pedidos: Pedido[] = [];
+  mensaje = '';
+
+  constructor(private pedidoServicio: PedidoServicio) {}
+
+  ngOnInit() {
+    this.pedidoServicio.obtenerPedidos()
+      .subscribe(datos => this.pedidos = datos);
+    localStorage.setItem('ultimaVisita', new Date().toString());
+  }
+
+  totalConDescuento(pedido: Pedido): number {
+    if (pedido.total > 100000) {
+      return pedido.total * 0.9;
+    }
+    return pedido.total;
+  }
+
+  cancelar(pedido: Pedido) {
+    this.pedidoServicio.cancelar(pedido.id)
+      .subscribe(() => this.mensaje = 'Pedido cancelado');
+  }
+}`
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        codigo:
+                            `import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Pedido } from '../modelos/pedido.modelo';
+
+@Injectable({ providedIn: 'root' })
+export class PedidoServicio {
+  private notificador = new NotificacionCorreo();
+
+  constructor(private http: HttpClient) {}
+
+  obtenerPedidos() {
+    return this.http.get<Pedido[]>('/api/pedidos');
+  }
+
+  cancelar(id: number) {
+    this.notificador.enviar('Tu pedido ' + id + ' fue cancelado');
+    return this.http.delete('/api/pedidos/' + id);
+  }
+
+  generarReportePdf(pedidos: Pedido[]) {
+    const filas = pedidos.map(p => p.id + ': ' + p.total);
+    return this.http.post('/api/reportes/pdf', { filas });
+  }
+}`
+                    },
+                    {
+                        archivo: 'avisos.componente.ts',
+                        codigo:
+                            `export class AvisosComponente {
+  constructor(private fabrica: NotificacionFabrica) {}
+
+  avisar(canal: string, mensaje: string) {
+    let notificacion: Notificacion;
+    if (canal === 'sms') {
+      notificacion = new NotificacionSms();
+    } else {
+      notificacion = new NotificacionCorreo();
+    }
+    return notificacion.enviar(mensaje);
+  }
+}`
+                    }
+                ],
+                problemas: [
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        linea: 8,
+                        comentario: 'Singleton (reto 7): providers: [PedidoServicio] crea una copia del servicio solo para esta pantalla. Si otra parte de la app cancela un pedido, esta pantalla no se entera. Hay que quitar esta línea.'
+                    },
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        linea: 19,
+                        comentario: 'Capas (reto 3): localStorage es acceso a datos. El componente no debe guardar nada por su cuenta: se lo pide al servicio (por ejemplo, this.pedidoServicio.registrarVisita()).'
+                    },
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        linea: 22,
+                        hasta: 27,
+                        comentario: 'MVC (reto 1): "10% de descuento si pasa de $100.000" es una regla del negocio. Si queda en la vista, habrá que copiarla en el carrito, la factura y el correo. Va en el servicio (o el modelo), y el componente solo la usa.'
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        linea: 7,
+                        comentario: 'Inyección de dependencias (reto 6): el servicio crea su notificador con new y queda amarrado al correo para siempre. Debe pedir la fábrica de notificaciones en el constructor.'
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        linea: 20,
+                        hasta: 23,
+                        comentario: 'Responsabilidad única (reto 4): generar reportes PDF es otro trabajo. Si cambia el formato del reporte, no debería tocarse el servicio de pedidos. Va en ReporteServicio.'
+                    },
+                    {
+                        archivo: 'avisos.componente.ts',
+                        linea: 5,
+                        hasta: 10,
+                        comentario: 'Factory (reto 8): ¡ya pidió la fábrica en el constructor y no la usa! Este if con new repite lo que la fábrica ya sabe hacer. Debe ser this.fabrica.crear(canal).'
+                    }
+                ],
+                falsasAlarmas: [
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        linea: 14,
+                        comentario: 'Pedir el servicio en el constructor es correcto (inyección de dependencias).'
+                    },
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        linea: 17,
+                        hasta: 18,
+                        comentario: 'Pedirle los pedidos al servicio y esperar la respuesta con subscribe es justo lo que debe hacer el componente.'
+                    },
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        linea: 29,
+                        hasta: 32,
+                        comentario: 'Cancelar a través del servicio y mostrar un mensaje está bien: el componente coordina y muestra.'
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        linea: 2,
+                        comentario: 'Un servicio SÍ puede usar HttpClient: es la capa que habla con la API.'
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        linea: 5,
+                        comentario: 'providedIn: \'root\' está bien: hace que exista un solo PedidoServicio (Singleton).'
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        linea: 9,
+                        comentario: 'Pedir HttpClient en el constructor de un servicio es correcto.'
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        linea: 11,
+                        hasta: 13,
+                        comentario: 'Obtener los pedidos de la API es justo el trabajo de este servicio.'
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        linea: 16,
+                        comentario: 'Usar el notificador para avisar está bien. El problema es CÓMO se consiguió ese notificador (línea 7).'
+                    },
+                    {
+                        archivo: 'avisos.componente.ts',
+                        linea: 2,
+                        comentario: 'Pedir la fábrica en el constructor es correcto. El problema es que después no la usa.'
+                    },
+                    {
+                        archivo: 'avisos.componente.ts',
+                        linea: 11,
+                        comentario: 'Usar enviar() del contrato está bien: funciona con cualquier canal.'
+                    }
+                ],
+                archivosCorregidos: [
+                    {
+                        archivo: 'pedidos.componente.ts',
+                        codigo:
+                            `import { Component, OnInit } from '@angular/core';
+import { PedidoServicio } from '../servicios/pedido.servicio';
+import { Pedido } from '../modelos/pedido.modelo';
+
+@Component({
+  selector: 'app-pedidos',
+  templateUrl: './pedidos.componente.html'
+})
+export class PedidosComponente implements OnInit {
+  pedidos: Pedido[] = [];
+  mensaje = '';
+
+  constructor(private pedidoServicio: PedidoServicio) {}
+
+  ngOnInit() {
+    this.pedidoServicio.obtenerPedidos()
+      .subscribe(datos => this.pedidos = datos);
+    this.pedidoServicio.registrarVisita();
+  }
+
+  totalConDescuento(pedido: Pedido): number {
+    return this.pedidoServicio.calcularTotal(pedido);
+  }
+
+  cancelar(pedido: Pedido) {
+    this.pedidoServicio.cancelar(pedido.id)
+      .subscribe(() => this.mensaje = 'Pedido cancelado');
+  }
+}`
+                    },
+                    {
+                        archivo: 'pedido.servicio.ts',
+                        codigo:
+                            `import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Pedido } from '../modelos/pedido.modelo';
+import { NotificacionFabrica } from '../notificaciones/notificacion.fabrica';
+
+@Injectable({ providedIn: 'root' })
+export class PedidoServicio {
+  constructor(
+    private http: HttpClient,
+    private fabrica: NotificacionFabrica
+  ) {}
+
+  obtenerPedidos() {
+    return this.http.get<Pedido[]>('/api/pedidos');
+  }
+
+  calcularTotal(pedido: Pedido): number {
+    return pedido.total > 100000 ? pedido.total * 0.9 : pedido.total;
+  }
+
+  registrarVisita() {
+    localStorage.setItem('ultimaVisita', new Date().toString());
+  }
+
+  cancelar(id: number) {
+    this.fabrica.crear('correo').enviar('Tu pedido ' + id + ' fue cancelado');
+    return this.http.delete('/api/pedidos/' + id);
+  }
+}`
+                    },
+                    {
+                        archivo: 'reporte.servicio.ts',
+                        codigo:
+                            `import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Pedido } from '../modelos/pedido.modelo';
+
+@Injectable({ providedIn: 'root' })
+export class ReporteServicio {
+  constructor(private http: HttpClient) {}
+
+  generarPdf(pedidos: Pedido[]) {
+    const filas = pedidos.map(p => p.id + ': ' + p.total);
+    return this.http.post('/api/reportes/pdf', { filas });
+  }
+}`
+                    },
+                    {
+                        archivo: 'avisos.componente.ts',
+                        codigo:
+                            `export class AvisosComponente {
+  constructor(private fabrica: NotificacionFabrica) {}
+
+  avisar(canal: string, mensaje: string) {
+    const notificacion = this.fabrica.crear(canal);
+    return notificacion.enviar(mensaje);
+  }
+}`
+                    }
+                ]
+            }
         }
 
     ];
+
+    /** Reto bonus: no está en la ruta, se abre al terminar los 9 retos y no cuenta para el 100%. */
+    private retoBonus: Reto = {
+        id: 10,
+        misionId: 5,
+        esBonus: true,
+        titulo: 'La puerta de entrada',
+        descripcion: 'Conecta el frontend a varios microservicios a través de un API Gateway.',
+        tipoJuego: 'completar-codigo',
+        dificultad: 'media',
+        puntos: 250,
+        concepto: 'Microservicios y API Gateway',
+        contexto: 'La tienda creció y el servidor se dividió en 3 microservicios: productos, pedidos y usuarios. El frontend tiene sus direcciones regadas por todo el código, y cada vez que mueven uno de servidor se rompe la app. Conecta todo a través de un API Gateway.',
+        evidencia: 'GP-ARQ-04',
+
+        induccion: {
+            remitente: 'Arquitecto de software',
+            definicion: 'Los microservicios son una arquitectura en la que una aplicación grande se divide en servicios pequeños e independientes (por ejemplo: productos, pedidos y usuarios), cada uno con su propio código, su propia base de datos y su propio despliegue. El API Gateway es la puerta de entrada única: el frontend le habla solo a él, y él reenvía cada petición al microservicio correcto.',
+            idea: 'En vez de una sola aplicación gigante en el servidor, hay varias pequeñas que trabajan juntas. Para que el frontend no tenga que conocerlas todas, existe una sola puerta de entrada: el API Gateway.',
+            vidaReal: 'En un centro comercial hay muchas tiendas, cada una con su dueño, su bodega y sus horarios (los microservicios). Tú no necesitas saber dónde queda la bodega de cada una: entras por la puerta principal y el directorio te lleva a la tienda correcta (el API Gateway). Si una tienda se cambia de local, actualizan el directorio, y tú sigues entrando por la misma puerta.',
+            ejemplos: [
+                {
+                    titulo: 'Sin gateway vs. con gateway',
+                    codigo:
+                        `  SIN GATEWAY                              CON GATEWAY
+
+  Frontend ──► productos  :3001            Frontend ──► API Gateway ──► productos  :3001
+           ──► pedidos    :3002                                     ├──► pedidos    :3002
+           ──► usuarios   :3003                                     └──► usuarios   :3003
+
+  El frontend conoce 3 direcciones.        El frontend conoce 1 sola dirección.`
+                },
+                {
+                    titulo: 'El frontend conoce la dirección de cada microservicio',
+                    esCorrecto: false,
+                    archivo: 'tienda.servicio.ts',
+                    codigo:
+                        `export class TiendaServicio {
+  constructor(private http: HttpClient) {}
+
+  obtenerProductos() {
+    return this.http.get('http://10.0.0.5:3001/productos');
+  }
+
+  obtenerPedidos() {
+    return this.http.get('http://10.0.0.6:3002/pedidos');
+  }
+}`,
+                    anotaciones: [
+                        {
+                            linea: 1,
+                            marca: 'class TiendaServicio',
+                            tipo: 'clase',
+                            texto: 'Un servicio del frontend que pide datos al servidor.'
+                        },
+                        {
+                            linea: 4,
+                            marca: 'obtenerProductos()',
+                            tipo: 'metodo',
+                            texto: 'Un método que pide la lista de productos.'
+                        },
+                        {
+                            linea: 5,
+                            marca: "'http://10.0.0.5:3001/productos'",
+                            tipo: 'problema',
+                            texto: 'El frontend conoce la dirección exacta del microservicio de productos. Si lo mueven de servidor, hay que cambiar el frontend y volver a publicarlo.'
+                        },
+                        {
+                            linea: 9,
+                            marca: "'http://10.0.0.6:3002/pedidos'",
+                            tipo: 'problema',
+                            texto: 'Otra dirección distinta. Con 10 microservicios, serían 10 direcciones regadas por el código.'
+                        }
+                    ]
+                },
+                {
+                    titulo: 'Una sola dirección: la del gateway',
+                    esCorrecto: true,
+                    archivo: 'api.config.ts',
+                    codigo:
+                        `export const API_GATEWAY = 'https://api.mitienda.com';`,
+                    anotaciones: [
+                        {
+                            linea: 1,
+                            marca: 'API_GATEWAY',
+                            tipo: 'variable',
+                            texto: 'Una constante (una variable que nunca cambia) con la ÚNICA dirección que conoce el frontend: la del gateway.'
+                        }
+                    ]
+                },
+                {
+                    titulo: 'Todos los servicios entran por la misma puerta',
+                    esCorrecto: true,
+                    archivo: 'tienda.servicio.ts',
+                    codigo:
+                        `export class TiendaServicio {
+  constructor(private http: HttpClient) {}
+
+  obtenerProductos() {
+    return this.http.get(API_GATEWAY + '/productos');
+  }
+
+  obtenerPedidos() {
+    return this.http.get(API_GATEWAY + '/pedidos');
+  }
+}`,
+                    anotaciones: [
+                        {
+                            linea: 5,
+                            marca: 'API_GATEWAY',
+                            tipo: 'variable',
+                            texto: 'Siempre la misma puerta de entrada.'
+                        },
+                        {
+                            linea: 5,
+                            marca: "'/productos'",
+                            tipo: 'variable',
+                            texto: 'Solo cambia la ruta. El gateway sabe que /productos va al microservicio de productos.'
+                        },
+                        {
+                            linea: 9,
+                            marca: "'/pedidos'",
+                            tipo: 'variable',
+                            texto: 'Lo mismo con pedidos: el frontend no necesita saber en qué servidor vive.'
+                        }
+                    ]
+                }
+            ],
+            guia: {
+                titulo: 'Monolito vs. microservicios',
+                columnas: ['Pregunta', 'Monolito', 'Microservicios'],
+                filas: [
+                    ['¿Cómo está hecho el servidor?', 'Una sola aplicación grande', 'Varios servicios pequeños'],
+                    ['Si falla una parte…', 'Puede caerse todo', 'Solo falla ese servicio'],
+                    ['Para actualizar una parte…', 'Se publica todo de nuevo', 'Se publica solo ese servicio'],
+                    ['¿Cuántas direcciones conoce el frontend?', 'Una', 'Una, gracias al API Gateway'],
+                    ['¿Cuándo conviene?', 'Proyectos pequeños', 'Sistemas grandes con varios equipos']
+                ]
+            },
+            notaAngular: 'Para tu frontend en Angular casi nada cambia: los servicios siguen usando HttpClient. La diferencia es que todos apuntan a una sola dirección base, la del gateway. Por eso se guarda en una constante o en el archivo environment.ts.',
+            objetivo: 'Completa los 5 espacios para que el frontend hable solo con el API Gateway, y el gateway reenvíe cada petición a su microservicio.',
+            comoJugar: [
+                'tienda.servicio.ts (antes) muestra las direcciones regadas por el código: úsalo para encontrar la dirección de cada microservicio.',
+                'gateway.rutas.ts vive en el servidor: es el único que debe conocer las direcciones con números.',
+                'Toca un espacio vacío y luego la pieza que va ahí. Ojo: hay piezas de más.',
+                'Cuando llenes todos los espacios, pulsa Verificar.'
+            ]
+        },
+
+        pistas: [
+            'Las direcciones con números (10.0.0.x:300x) solo deben aparecer en el gateway, nunca en los servicios del frontend.',
+            'En los servicios del frontend, la dirección siempre empieza con API_GATEWAY y después va la ruta: /productos o /pedidos.'
+        ],
+
+        explicacionFinal: 'Acabas de conectar un frontend a una arquitectura de microservicios.\n\nAntes, el frontend conocía la dirección de cada microservicio: si uno se mudaba de servidor, había que cambiar el frontend y volver a publicarlo. Ahora el frontend solo conoce una dirección, la del API Gateway, y el gateway sabe a qué microservicio mandar cada petición.\n\nEs la misma idea de toda la ruta, pero en grande: cada microservicio tiene una sola responsabilidad (SRP), y el gateway esconde los detalles de atrás, como un contrato (interfaces).\n\nOjo: los microservicios no siempre son mejores. Para un proyecto pequeño, un monolito bien organizado (con MVC y capas) suele ser más fácil de mantener.',
+
+        completarCodigo: {
+            archivos: [
+                {
+                    archivo: 'tienda.servicio.ts (antes)',
+                    nota: 'Así estaba: 3 direcciones regadas',
+                    codigo:
+                        `export class TiendaServicio {
+  constructor(private http: HttpClient) {}
+
+  obtenerProductos() {
+    return this.http.get<Producto[]>('http://10.0.0.5:3001/productos');
+  }
+
+  crearPedido(pedido: Pedido) {
+    return this.http.post('http://10.0.0.6:3002/pedidos', pedido);
+  }
+
+  obtenerUsuario(id: number) {
+    return this.http.get<Usuario>('http://10.0.0.7:3003/usuarios/' + id);
+  }
+}`
+                },
+                {
+                    archivo: 'gateway.rutas.ts',
+                    nota: 'Vive en el servidor',
+                    codigo:
+                        `// El API Gateway: la única puerta de entrada al servidor.
+// Recibe cada petición y la reenvía al microservicio correcto.
+export const rutas: Record<string, string> = {
+  '/productos': 'http://10.0.0.5:3001',
+  '/pedidos':   'http://10.0.0.6:3002',
+  '/usuarios':  [[1]]
+};`
+                },
+                {
+                    archivo: 'api.config.ts',
+                    codigo:
+                        `// La ÚNICA dirección que conoce el frontend
+export const API_GATEWAY = [[2]];`
+                },
+                {
+                    archivo: 'productos.servicio.ts',
+                    codigo:
+                        `import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { API_GATEWAY } from '../api.config';
+import { Producto } from '../modelos/producto.modelo';
+
+@Injectable({ providedIn: 'root' })
+export class ProductosServicio {
+  constructor(private http: HttpClient) {}
+
+  obtenerProductos() {
+    return this.http.get<Producto[]>([[3]] + '/productos');
+  }
+}`
+                },
+                {
+                    archivo: 'pedidos.servicio.ts',
+                    codigo:
+                        `import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { API_GATEWAY } from '../api.config';
+import { Pedido } from '../modelos/pedido.modelo';
+
+@Injectable({ providedIn: 'root' })
+export class PedidosServicio {
+  constructor(private http: HttpClient) {}
+
+  crearPedido(pedido: Pedido) {
+    return this.http.[[4]](API_GATEWAY + [[5]], pedido);
+  }
+}`
+                }
+            ],
+            huecos: [
+                {
+                    id: 1,
+                    respuesta: "'http://10.0.0.7:3003'",
+                    ayuda: 'El gateway es el que SÍ conoce dónde vive cada microservicio. Busca en tienda.servicio.ts (antes) la dirección del microservicio de usuarios.',
+                    explicacion: 'El gateway guarda la dirección de cada microservicio. Si usuarios se muda de servidor, solo se cambia esta línea, y el frontend ni se entera.'
+                },
+                {
+                    id: 2,
+                    respuesta: "'https://api.mitienda.com'",
+                    ayuda: 'El frontend debe conocer UNA sola dirección: la de la puerta de entrada, no la de un microservicio.',
+                    explicacion: 'API_GATEWAY guarda la única dirección que necesita el frontend: la del gateway.'
+                },
+                {
+                    id: 3,
+                    respuesta: 'API_GATEWAY',
+                    ayuda: 'No escribas la dirección del microservicio: usa la constante que guarda la dirección del gateway.',
+                    explicacion: 'API_GATEWAY + \'/productos\': siempre la misma puerta, y el gateway decide a dónde va.'
+                },
+                {
+                    id: 4,
+                    respuesta: 'post',
+                    ayuda: 'Crear un pedido es ENVIAR datos nuevos al servidor. ¿Qué método de HttpClient se usa para eso?',
+                    explicacion: 'post se usa para enviar datos nuevos (crear). get es solo para pedir datos.'
+                },
+                {
+                    id: 5,
+                    respuesta: "'/pedidos'",
+                    ayuda: '¿Qué ruta usa el gateway para el microservicio de pedidos? Mírala en gateway.rutas.ts.',
+                    explicacion: '\'/pedidos\' es la ruta que el gateway reenvía al microservicio de pedidos.'
+                }
+            ],
+            distractores: ["'http://10.0.0.5:3001'", 'get', "'/productos'", "'http://10.0.0.6:3002/pedidos'", 'HttpClient'],
+            archivosExtra: [
+                {
+                    archivo: 'gateway.rutas.ts (después de una mudanza)',
+                    nota: '¿Y si pedidos se muda de servidor?',
+                    codigo:
+                        `export const rutas: Record<string, string> = {
+  '/productos': 'http://10.0.0.5:3001',
+  '/pedidos':   'http://10.0.0.20:3002',   // ← Se mudó: solo cambia aquí
+  '/usuarios':  'http://10.0.0.7:3003'
+};
+
+// El frontend (api.config.ts y los servicios) NO cambia.`
+                }
+            ]
+        }
+    };
+
+    /** El bonus se completa aparte: no suma a retosCompletados. */
+    private bonusCompletado = false;
 
     private progreso: Progreso = {
         puntos: 0,
@@ -1821,8 +3322,17 @@ export class PaginaCarritoComponente {
     }
 
 
+    /** Busca en la ruta y también el bonus. */
     obtenerReto(id: number): Reto | undefined {
+        if (id === this.retoBonus.id) {
+            return this.retoBonus;
+        }
         return this.retos.find(reto => reto.id === id);
+    }
+
+
+    obtenerRetoBonus(): Reto {
+        return this.retoBonus;
     }
 
 
@@ -1868,6 +3378,14 @@ export class PaginaCarritoComponente {
      * el último reto retoActual se queda en el último, pero ya no queda ninguno por hacer.
      */
     obtenerEstadoReto(id: number): EstadoReto {
+        // El bonus se abre cuando se terminan TODOS los retos de la ruta
+        if (id === this.retoBonus.id) {
+            if (this.bonusCompletado) {
+                return 'completado';
+            }
+            return this.progreso.retosCompletados >= this.retos.length ? 'actual' : 'bloqueado';
+        }
+
         if (id <= this.progreso.retosCompletados) {
             return 'completado';
         }
@@ -1880,7 +3398,16 @@ export class PaginaCarritoComponente {
 
     /** Reto que el jugador debe resolver ahora. undefined si ya terminó la ruta. */
     obtenerRetoActual(): Reto | undefined {
-        return this.obtenerReto(this.progreso.retosCompletados + 1);
+        return this.retos.find(reto => reto.id === this.progreso.retosCompletados + 1);
+    }
+
+
+    /** Suma los puntos del bonus (son puntos extra: no cambian el progreso de la ruta). */
+    completarBonus(puntos: number): void {
+        if (!this.bonusCompletado) {
+            this.progreso.puntos += puntos;
+            this.bonusCompletado = true;
+        }
     }
 
 

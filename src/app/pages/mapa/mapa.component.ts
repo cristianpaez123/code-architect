@@ -16,6 +16,7 @@ export class MapaComponent {
   retos: Reto[];
   progreso: Progreso;
   puntosTotales: number;
+  bonus: Reto;
 
   /** Reto que se muestra en el panel de detalle. */
   retoSeleccionado: Reto | undefined;
@@ -28,6 +29,7 @@ export class MapaComponent {
     this.retos = this.juegoService.obtenerRetos();
     this.progreso = this.juegoService.obtenerProgreso();
     this.puntosTotales = this.juegoService.obtenerPuntosTotales();
+    this.bonus = this.juegoService.obtenerRetoBonus();
 
     // Por defecto se muestra el reto actual; si la ruta terminó, el último.
     this.retoSeleccionado = this.juegoService.obtenerRetoActual() ?? this.retos[this.retos.length - 1];

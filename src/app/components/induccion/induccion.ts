@@ -29,7 +29,7 @@ interface EjemploAnotado {
 
 /** Orden en que aparecen los tipos en la leyenda. */
 const ORDEN_TIPOS: TipoAnotacion[] = [
-  'interface', 'clase', 'constructor', 'metodo', 'propiedad', 'variable', 'inyeccion', 'problema'
+  'html', 'evento', 'dato', 'interface', 'clase', 'constructor', 'metodo', 'propiedad', 'variable', 'inyeccion', 'problema'
 ];
 
 /**

@@ -7,11 +7,8 @@
     <div class="concepto__info">
       <span class="concepto__etiqueta">EN ESTE RETO APRENDES</span>
       <h2 class="concepto__nombre">{{ reto.concepto }}</h2>
-      <p class="concepto__texto">{{ reto.descripcion }}</p>
+      <p class="concepto__texto">{{ induccion.definicion ?? reto.descripcion }}</p>
     </div>
-    @if (reto.evidencia) {
-    <span class="concepto__evidencia mono">Evidencia {{ reto.evidencia }}</span>
-    }
   </section>
 
   <!-- Idea y vida real -->

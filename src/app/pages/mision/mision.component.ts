@@ -20,7 +20,7 @@ type Fase = 'induccion' | 'jugando' | 'completado';
  */
 @Component({
   selector: 'app-mision',
-  imports: [RouterLink, Induccion, Mentor, RetoMoverCodigo, 
+  imports: [RouterLink, Induccion, Mentor, RetoMoverCodigo,
     RetoOrdenarFlujoComponent, RetoRevisarCodigo, RetoCompletarCodigo],
   templateUrl: './mision.component.html',
   styleUrl: './mision.component.css',
@@ -146,7 +146,11 @@ export class MisionComponent {
     this.puntosObtenidos = this.puntosPosibles;
 
     if (!this.esRepeticion) {
-      this.juegoService.completarReto(this.puntosObtenidos);
+      if (this.reto.esBonus) {
+        this.juegoService.completarBonus(this.puntosObtenidos);
+      } else {
+        this.juegoService.completarReto(this.puntosObtenidos);
+      }
     }
 
     this.fase = 'completado';

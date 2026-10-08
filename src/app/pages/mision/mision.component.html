@@ -165,6 +165,9 @@
       <div>
         <p class="label">RETO COMPLETADO</p>
         <p class="resultado__valor">
+          @if (reto.esBonus) {
+          <span class="chip chip--bonus">⭐ Bonus · puntos extra</span>
+          }
           @if (esRepeticion) {
           <span class="mono">Repaso terminado</span>
           } @else {

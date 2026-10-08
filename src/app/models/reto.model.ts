@@ -30,6 +30,9 @@ export type TipoAnotacion =
     | 'variable'
     | 'constructor'
     | 'inyeccion'
+    | 'html'
+    | 'evento'
+    | 'dato'
     | 'problema';
 
 /** Nombre y explicación corta de cada tipo (para la leyenda "Cómo leer el código"). */
@@ -41,6 +44,9 @@ export const ANOTACION_INFO: Record<TipoAnotacion, { nombre: string; descripcion
     variable: { nombre: 'Variable', descripcion: 'Un nombre que guarda un dato para usarlo después.' },
     constructor: { nombre: 'Constructor', descripcion: 'Lo que la clase pide para poder nacer (se ejecuta con new).' },
     inyeccion: { nombre: 'Inyección', descripcion: 'Entregarle a una clase lo que pidió en su constructor.' },
+    html: { nombre: 'Etiqueta HTML', descripcion: 'Algo que se dibuja en la pantalla: un título, un botón, un párrafo.' },
+    evento: { nombre: 'Evento', descripcion: 'Lo que pasa cuando el usuario hace algo, como (click) en un botón.' },
+    dato: { nombre: 'Mostrar dato', descripcion: 'Las llaves dobles {{ }} muestran en pantalla un dato del componente.' },
     problema: { nombre: 'Problema', descripcion: 'Lo que está mal y hay que cambiar.' }
 };
 
@@ -67,7 +73,8 @@ export interface TablaGuia {
 }
 
 export interface ContenidoInduccion {
-    remitente: string;         // Quién envía el ticket: "Tech Lead"
+    remitente: string;
+    definicion?: string;
     idea: string;              // La idea en una frase
     vidaReal: string;          // Analogía de la vida real
     ejemplos: EjemploCodigo[]; // Código antes / después
@@ -162,6 +169,7 @@ export interface ConfigCompletarCodigo {
 export interface Reto {
     id: number;
     misionId: number;
+    esBonus?: boolean;
     titulo: string;
     descripcion: string;
     tipoJuego: TipoJuego;

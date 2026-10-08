@@ -86,6 +86,11 @@
   color: var(--done);
 }
 
+.chip--bonus {
+  border-color: #4a3b16;
+  color: var(--xp);
+}
+
 /* ---------- Fases ---------- */
 .fases {
   margin: 0;

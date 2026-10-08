@@ -12,7 +12,7 @@
 .concepto {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 14px 16px;
   padding: 18px 20px;
   border-radius: 14px;
@@ -57,9 +57,10 @@
 }
 
 .concepto__texto {
-  margin: 0;
-  font-size: 14px;
-  color: var(--text-2);
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-soft);
 }
 
 .concepto__evidencia {
@@ -130,12 +131,12 @@
   min-width: 0;
 }
 
-.ejemplos > .ejemplo {
+.ejemplos>.ejemplo {
   flex: 1 1 420px;
 }
 
-.ejemplos > .ejemplo--mal,
-.ejemplos > .ejemplo--neutro {
+.ejemplos>.ejemplo--mal,
+.ejemplos>.ejemplo--neutro {
   flex-basis: 100%;
 }
 
@@ -280,14 +281,71 @@
 }
 
 /* ---------- Colores por tipo ---------- */
-.chip--interface, .marca--interface, .burbuja--interface { --tipo: #c4a5ff; }
-.chip--clase, .marca--clase, .burbuja--clase { --tipo: #8db0ff; }
-.chip--constructor, .marca--constructor, .burbuja--constructor { --tipo: #7cd4ff; }
-.chip--metodo, .marca--metodo, .burbuja--metodo { --tipo: #f2b84b; }
-.chip--propiedad, .marca--propiedad, .burbuja--propiedad { --tipo: #5fd4c4; }
-.chip--variable, .marca--variable, .burbuja--variable { --tipo: #5fd4c4; }
-.chip--inyeccion, .marca--inyeccion, .burbuja--inyeccion { --tipo: #3dd68c; }
-.chip--problema, .marca--problema, .burbuja--problema { --tipo: #f0705a; }
+.chip--interface,
+.marca--interface,
+.burbuja--interface {
+  --tipo: #c4a5ff;
+}
+
+.chip--clase,
+.marca--clase,
+.burbuja--clase {
+  --tipo: #8db0ff;
+}
+
+.chip--constructor,
+.marca--constructor,
+.burbuja--constructor {
+  --tipo: #7cd4ff;
+}
+
+.chip--metodo,
+.marca--metodo,
+.burbuja--metodo {
+  --tipo: #f2b84b;
+}
+
+.chip--propiedad,
+.marca--propiedad,
+.burbuja--propiedad {
+  --tipo: #5fd4c4;
+}
+
+.chip--variable,
+.marca--variable,
+.burbuja--variable {
+  --tipo: #5fd4c4;
+}
+
+.chip--inyeccion,
+.marca--inyeccion,
+.burbuja--inyeccion {
+  --tipo: #3dd68c;
+}
+
+.chip--problema,
+.marca--problema,
+.burbuja--problema {
+  --tipo: #f0705a;
+}
+
+.chip--html,
+.marca--html,
+.burbuja--html {
+  --tipo: #ff8fb8;
+}
+
+.chip--evento,
+.marca--evento,
+.burbuja--evento {
+  --tipo: #ffa45c;
+}
+
+.chip--dato,
+.marca--dato,
+.burbuja--dato {
+  --tipo: #c3e36b;
+}
 
 .chip {
   display: inline-block;
