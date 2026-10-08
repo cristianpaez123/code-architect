@@ -1,0 +1,254 @@
+:host {
+  display: block;
+}
+
+.induccion {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Ticket ---------- */
+.ticket {
+  background: var(--bg-header);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--current);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ticket__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.ticket__id {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ticket__meta {
+  color: var(--text-3);
+}
+
+.ticket__text {
+  margin: 0;
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+/* ---------- Bloques ---------- */
+.ideas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.bloque {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.bloque--idea {
+  border-color: var(--border-current);
+  background: var(--surface-current);
+}
+
+.bloque--objetivo {
+  border-color: var(--border-done);
+  background: var(--surface-done);
+}
+
+.bloque__titulo {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bloque__texto {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+
+/* ---------- Ejemplos de código ---------- */
+.ejemplos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ejemplo {
+  flex: 1 1 260px;
+  margin: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-header);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.ejemplo--mal {
+  flex-basis: 100%;
+  border-color: #4a2a2a;
+}
+
+.ejemplo--bien {
+  border-color: var(--border-done);
+}
+
+.ejemplo__titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ejemplo__icono {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ejemplo--mal .ejemplo__icono {
+  background: #3a1d1d;
+  color: #f0705a;
+}
+
+.ejemplo--bien .ejemplo__icono {
+  background: var(--done-icon-bg);
+  color: var(--done);
+}
+
+.ejemplo__archivo {
+  padding: 0 14px 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.ejemplo__codigo {
+  margin: 0;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border-subtle);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  white-space: pre-wrap;
+}
+
+/* ---------- Tabla guía ---------- */
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabla th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabla td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-soft);
+  vertical-align: top;
+}
+
+.tabla td:nth-child(2) {
+  font-weight: 600;
+  color: var(--current-text);
+  white-space: nowrap;
+}
+
+.tabla td:nth-child(3) {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.nota {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.nota strong {
+  color: var(--text);
+}
+
+/* ---------- Cómo se juega ---------- */
+.pasos {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-soft);
+}
+
+/* ---------- Acciones ---------- */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.acciones__nota {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+@media (max-width: 640px) {
+  .bloque {
+    padding: 16px;
+  }
+
+  .acciones .btn {
+    width: 100%;
+  }
+}

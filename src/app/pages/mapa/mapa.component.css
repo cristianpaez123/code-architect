@@ -1,0 +1,682 @@
+/* Code Architect · Mapa de retos (los estilos compartidos están en styles.css) */
+
+:host {
+  display: block;
+
+  /* Separación entre las dos columnas del zigzag y grosor de las líneas */
+  --route-gap: 40px;
+  --line: 2px;
+}
+
+/* ---------- Página ---------- */
+.page {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 32px var(--gutter) 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.page__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.page__subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+/* Progreso de la ruta: un segmento por reto */
+.route-progress {
+  width: 360px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.route-progress__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.segments {
+  display: grid;
+  gap: 4px;
+}
+
+.segment {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+}
+
+.segment--done {
+  background: var(--done);
+}
+
+.segment--current {
+  background: var(--current);
+}
+
+/* Mapa + panel: lado a lado en desktop */
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* ---------- Mapa ---------- */
+.map {
+  flex: 999 1 560px;
+  min-width: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend__hint {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.legend__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legend__dot--done {
+  background: var(--done);
+  color: var(--bg);
+}
+
+.legend__dot--current {
+  border: 2px solid var(--current);
+  background: var(--surface-current);
+}
+
+.legend__dot--locked {
+  border: 1px dashed var(--border-muted);
+  color: var(--text-3);
+}
+
+.map__canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 24px 40px;
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(#1b212b 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.stage-chip {
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: 1px dashed var(--border-strong);
+  background: var(--bg-canvas);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* Ruta en zigzag: 2 columnas, un reto por fila */
+.route {
+  width: 100%;
+  max-width: 720px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--route-gap);
+}
+
+.route__item {
+  display: flex;
+  justify-content: center;
+}
+
+.route__item--left {
+  grid-column: 1;
+}
+
+.route__item--right {
+  grid-column: 2;
+}
+
+/* ---------- Conector entre retos ----------
+   Va del centro de una columna al centro de la otra:
+   baja, cruza y vuelve a bajar. link--rtl lo refleja. */
+.link {
+  grid-column: 1 / -1;
+  position: relative;
+  height: 48px;
+  --link-color: var(--locked-line);
+  --link-style: dashed;
+}
+
+.link--done {
+  --link-color: var(--done-line);
+  --link-style: solid;
+}
+
+.link--current {
+  --link-color: var(--current);
+  --link-style: solid;
+  --line: 3px;
+}
+
+.link__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc((100% - var(--route-gap)) / 4 - var(--line) / 2);
+  right: calc((100% - var(--route-gap)) / 4 - var(--line) / 2);
+}
+
+.link--rtl .link__line {
+  transform: scaleX(-1);
+}
+
+.link__a,
+.link__b {
+  position: absolute;
+  width: 50%;
+  border: 0 var(--link-style) var(--link-color);
+}
+
+.link__a {
+  top: 0;
+  left: 0;
+  height: 50%;
+  border-left-width: var(--line);
+  border-bottom-width: var(--line);
+  border-bottom-left-radius: 10px;
+}
+
+.link__b {
+  right: 0;
+  top: calc(50% - var(--line));
+  height: calc(50% + var(--line));
+  border-top-width: var(--line);
+  border-right-width: var(--line);
+  border-top-right-radius: 10px;
+}
+
+/* ---------- Nodo de reto ---------- */
+.node {
+  width: 100%;
+  max-width: 300px;
+  min-height: 76px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font-family: var(--font-sans);
+  text-align: left;
+}
+
+/* Los nodos completado y actual son <button>: se pueden seleccionar */
+button.node {
+  cursor: pointer;
+}
+
+.node.is-selected {
+  outline: 2px solid var(--current-text);
+  outline-offset: 3px;
+}
+
+.node--current.is-selected {
+  outline: none;
+}
+
+.node__dot {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node__text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.node__num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.node__name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.node__hint {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.node__points {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Completado */
+.node--completed {
+  background: var(--surface-done);
+  border-color: var(--border-done);
+  transition: border-color 150ms ease;
+}
+
+.node--completed:hover {
+  border-color: var(--done-line);
+}
+
+.node--completed .node__dot {
+  background: var(--done);
+  color: var(--bg);
+}
+
+.node--completed .node__points {
+  color: var(--done);
+}
+
+/* Actual: el elemento más visible del mapa */
+.node--current {
+  position: relative;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: 18px 16px 16px;
+  background: var(--surface-current);
+  border: 2px solid var(--current);
+  border-radius: 14px;
+  box-shadow: 0 0 0 4px rgb(91 140 255 / 0.14), 0 16px 32px -16px rgb(0 0 0 / 0.7);
+}
+
+.node__here {
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--current);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.node__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.node--current .node__dot {
+  border: 2px solid var(--current);
+  background: var(--current-icon-strong);
+  color: var(--current-text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.node--current .node__num {
+  color: var(--current-text);
+}
+
+.node--current .node__name {
+  font-size: 17px;
+}
+
+.node--current .node__points {
+  color: var(--xp);
+}
+
+.node__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.node__type {
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-current);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--current-text);
+}
+
+/* Bloqueado */
+.node--locked {
+  border-style: dashed;
+  border-color: var(--border-strong);
+  color: var(--text-3);
+}
+
+.node--locked .node__dot {
+  border: 1px dashed var(--border-muted);
+}
+
+.node--locked .node__name {
+  color: var(--text-2);
+}
+
+/* El siguiente bloqueado se ve un poco más presente que el resto */
+.node--next {
+  background: var(--surface-locked);
+  border-color: var(--border-muted);
+}
+
+.node--next .node__name {
+  color: var(--text-soft);
+}
+
+/* ---------- Panel de detalle ---------- */
+.detail {
+  flex: 1 1 320px;
+  max-width: 380px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail__icon {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--current-icon-strong);
+  color: var(--current-text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.detail__icon--done {
+  background: var(--done-icon-bg);
+  color: var(--done);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status--current {
+  color: var(--current-text);
+}
+
+.status--done {
+  color: var(--done);
+}
+
+.status__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--current);
+}
+
+.detail__title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.detail__text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.fact {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.fact dt {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.fact dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Contexto del ticket y concepto aprendido */
+.ticket {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--bg-header);
+  border-left: 2px solid var(--current);
+}
+
+.ticket__text {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+
+.learned {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--surface-done);
+  border: 1px solid var(--border-done);
+}
+
+.learned__name {
+  margin: 6px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--done);
+}
+
+.unlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px dashed var(--border-strong);
+}
+
+.unlock__icon {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px dashed var(--border-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+}
+
+.unlock__label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.unlock__name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+/* ---------- Responsive ---------- */
+
+/* 1024px y tablet: el panel pasa arriba del mapa, a todo el ancho */
+@media (max-width: 1040px) {
+  .detail {
+    order: -1;
+    max-width: none;
+    flex-basis: 100%;
+  }
+}
+
+/* Mobile: la ruta pasa a una sola columna con línea vertical */
+@media (max-width: 640px) {
+  .page {
+    padding-top: 24px;
+    gap: 20px;
+  }
+
+  .page__title {
+    font-size: 24px;
+  }
+
+  .route-progress {
+    width: 100%;
+  }
+
+  .detail {
+    padding: 20px;
+  }
+
+  .map__canvas {
+    padding: 24px 16px 32px;
+  }
+
+  .route {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .route__item--left,
+  .route__item--right {
+    grid-column: 1;
+  }
+
+  .node {
+    max-width: none;
+  }
+
+  .link {
+    height: 40px;
+  }
+
+  /* La línea queda alineada con el círculo de cada reto */
+  .link__line {
+    left: calc(34px - var(--line) / 2);
+    right: auto;
+    width: 0;
+  }
+
+  .link--rtl .link__line {
+    transform: none;
+  }
+
+  .link__a {
+    width: 0;
+    height: 100%;
+    border-bottom-width: 0;
+    border-radius: 0;
+  }
+
+  .link__b {
+    display: none;
+  }
+
+  /* La etiqueta pasa a la derecha para no tapar la línea */
+  .node__here {
+    left: auto;
+    right: 14px;
+  }
+}

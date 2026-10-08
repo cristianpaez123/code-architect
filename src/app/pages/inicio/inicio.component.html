@@ -1,1 +1,240 @@
-<h1>HOLA ANGULAR</h1>
+<!-- ===================== HEADER ===================== -->
+<header class="header">
+  <div class="header__inner">
+    <a class="brand" routerLink="/">
+      <span class="brand__mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m12 2 10 5-10 5L2 7l10-5z" /><path d="m2 17 10 5 10-5" /><path d="m2 12 10 5 10-5" />
+        </svg>
+      </span>
+      <span class="brand__name">Code Architect</span>
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <a class="nav__link is-active" routerLink="/" aria-current="page">Inicio</a>
+      <a class="nav__link" routerLink="/mapa">Mapa de retos</a>
+    </nav>
+
+    <div class="header__spacer"></div>
+
+    <div class="player">
+      <span class="player__level">RETO {{ retoActual?.id ?? progreso.retosTotales }} / {{ progreso.retosTotales }}</span>
+      <span class="points">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+        {{ progreso.puntos }} pts
+      </span>
+    </div>
+
+    <button type="button" class="avatar" aria-label="Perfil de usuario">JD</button>
+  </div>
+</header>
+
+<main class="home">
+
+  <!-- ===================== HERO + RETO ACTUAL ===================== -->
+  <section class="intro">
+
+    <div class="hero">
+      @if (rutaCompletada) {
+        <span class="eyebrow">RUTA COMPLETADA</span>
+        <h1 class="hero__title">Completaste la ruta de arquitecto.</h1>
+        <p class="hero__text">Resolviste los {{ progreso.retosTotales }} retos. Puedes repetir cualquiera desde el mapa para practicar.</p>
+      } @else if (esJugadorNuevo) {
+        <span class="eyebrow">{{ progreso.retosTotales }} RETOS · DE JUNIOR DEVELOPER A ARQUITECTO</span>
+        <h1 class="hero__title">Aprende arquitectura de software resolviendo tickets reales.</h1>
+        <p class="hero__text">Cada reto es un problema del día a día de un equipo de desarrollo. Lo resuelves, recibes feedback y desbloqueas el siguiente.</p>
+      } @else {
+        <span class="eyebrow">RETO {{ retoActual?.id }} DE {{ progreso.retosTotales }}</span>
+        <h1 class="hero__title">Sigue construyendo tu criterio de arquitecto.</h1>
+        <p class="hero__text">
+          Llevas {{ progreso.retosCompletados }} de {{ progreso.retosTotales }} retos.
+          @if (siguienteReto) {
+            Resuelve «{{ retoActual?.titulo }}» para desbloquear el siguiente.
+          } @else {
+            Te queda el reto final.
+          }
+        </p>
+      }
+
+      <ol class="flow" aria-label="Cómo funciona">
+        <li class="flow__step">Ticket</li>
+        <li class="flow__arrow" aria-hidden="true">→</li>
+        <li class="flow__step">Reto</li>
+        <li class="flow__arrow" aria-hidden="true">→</li>
+        <li class="flow__step">Feedback del mentor</li>
+        <li class="flow__arrow" aria-hidden="true">→</li>
+        <li class="flow__step flow__step--accent">+ puntos</li>
+      </ol>
+
+      <div class="hero__actions">
+        @if (esJugadorNuevo) {
+          <a class="btn btn--primary btn--lg" routerLink="/mapa">
+            Comenzar aventura
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+          </a>
+        } @else {
+          <a class="btn btn--secondary" routerLink="/mapa">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" /><path d="M9 4v14" /><path d="M15 6v14" /></svg>
+            Ver mapa de retos
+          </a>
+        }
+      </div>
+    </div>
+
+    @if (retoActual; as reto) {
+      <article class="card" aria-labelledby="reto-actual">
+        <!-- Ticket laboral -->
+        <div class="ticket">
+          <div class="ticket__bar">
+            <span class="ticket__id">TICKET #{{ numero(reto.id).padStart(3, '0') }}</span>
+            <span class="ticket__meta">reto {{ reto.id }} / {{ progreso.retosTotales }}</span>
+          </div>
+          <div class="ticket__body">
+            <span class="ticket__from">De: Senior Developer · Para: Junior Developer</span>
+            <p class="ticket__text">{{ reto.contexto }}</p>
+          </div>
+        </div>
+
+        <!-- Información del reto -->
+        <div class="card__body">
+          <div class="card__eyebrow">
+            <span class="label">{{ esJugadorNuevo ? 'PRIMER RETO' : 'RETO ACTUAL' }}</span>
+            <span class="badge badge--current"><span class="badge__dot"></span>Disponible</span>
+          </div>
+
+          <div>
+            <h2 class="card__title" id="reto-actual"><span class="card__number">{{ numero(reto.id) }}</span> {{ reto.titulo }}</h2>
+            <p class="card__summary">{{ reto.descripcion }}</p>
+          </div>
+
+          <div class="card__meta">
+            <span class="difficulty">
+              <span class="difficulty__bars" aria-hidden="true">
+                <span class="bar on" style="height: 6px"></span>
+                <span class="bar" [class.on]="dificultadNivel[reto.dificultad] >= 2" style="height: 9px"></span>
+                <span class="bar" [class.on]="dificultadNivel[reto.dificultad] >= 3" style="height: 12px"></span>
+              </span>
+              {{ dificultadTexto[reto.dificultad] }}
+            </span>
+            <span class="points">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+              +{{ reto.puntos }} pts
+            </span>
+          </div>
+
+          <a
+            class="btn btn--lg card__cta"
+            [class.btn--primary]="!esJugadorNuevo"
+            [class.btn--secondary]="esJugadorNuevo"
+            [routerLink]="['/mision', reto.id]"
+          >
+            {{ esJugadorNuevo ? 'Ver reto' : 'Empezar reto' }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+          </a>
+
+          <p class="card__unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+            @if (siguienteReto; as siguiente) {
+              <span>Al completarlo desbloqueas <strong>Reto {{ siguiente.id }} · {{ siguiente.titulo }}</strong></span>
+            } @else {
+              <span>Es el reto final: al completarlo terminas la ruta.</span>
+            }
+          </p>
+        </div>
+      </article>
+    } @else {
+      <!-- Ruta terminada -->
+      <article class="card card--done">
+        <div class="card__body">
+          <span class="label">RESUMEN</span>
+          <p class="done__points"><span class="mono">{{ progreso.puntos }}</span> <span class="done__of">/ {{ puntosTotales }} pts</span></p>
+          <p class="card__summary">{{ progreso.retosCompletados }} retos completados · {{ progreso.ayudasUsadas }} ayudas usadas</p>
+          <a class="btn btn--secondary btn--lg card__cta" routerLink="/mapa">Repetir un reto</a>
+        </div>
+      </article>
+    }
+  </section>
+
+  <!-- ===================== PROGRESO ===================== -->
+  <section class="track" aria-labelledby="progreso">
+    <div class="track__header">
+      <div>
+        <h2 class="section-title" id="progreso">Tu progreso</h2>
+        <p class="track__subtitle">
+          @if (rutaCompletada) {
+            Completaste todos los retos de la ruta.
+          } @else if (esJugadorNuevo) {
+            Empiezas en el reto 1. Cada reto completado desbloquea el siguiente.
+          } @else {
+            Vas en el reto {{ retoActual?.id }}. Te {{ retosRestantes === 1 ? 'queda 1 reto' : 'quedan ' + retosRestantes + ' retos' }} para completar la ruta.
+          }
+        </p>
+      </div>
+      <dl class="stats">
+        <div class="stat"><dt>Retos completados</dt><dd class="mono">{{ progreso.retosCompletados }}<span class="stat__of"> / {{ progreso.retosTotales }}</span></dd></div>
+        <div class="stat"><dt>Puntos</dt><dd class="mono stat__points">{{ progreso.puntos }}<span class="stat__of"> / {{ puntosTotales }}</span></dd></div>
+        <div class="stat"><dt>Progreso general</dt><dd class="mono">{{ porcentaje }}%</dd></div>
+      </dl>
+    </div>
+
+    <div class="steps-wrap">
+      <span class="line-bg" [style.left.%]="lineaInicio" [style.width.%]="lineaAncho" aria-hidden="true"></span>
+      <span class="line-done" [style.left.%]="lineaInicio" [style.width.%]="lineaCompletada" aria-hidden="true"></span>
+
+      <ol class="steps" [style.grid-template-columns]="'repeat(' + retos.length + ', minmax(0, 1fr))'" aria-label="Ruta de retos">
+        @for (reto of retos; track reto.id) {
+          <li
+            class="step"
+            [class.step--completado]="estado(reto) === 'completado'"
+            [class.step--actual]="estado(reto) === 'actual'"
+            [class.step--bloqueado]="estado(reto) === 'bloqueado'"
+            [attr.aria-current]="estado(reto) === 'actual' ? 'step' : null"
+          >
+            <span class="step__dot" aria-hidden="true">{{ estado(reto) === 'completado' ? '✓' : reto.id }}</span>
+            <span class="step__name">{{ reto.titulo }}</span>
+          </li>
+        }
+      </ol>
+    </div>
+
+    @if (retoActual; as reto) {
+      <p class="track__current-mobile">Reto actual: <strong>{{ reto.id }} · {{ reto.titulo }}</strong></p>
+    }
+  </section>
+
+  <!-- ===================== CONCEPTOS ===================== -->
+  <section class="concepts" aria-labelledby="conceptos">
+    <div class="concepts__header">
+      <h2 class="section-title" id="conceptos">Conceptos dominados</h2>
+      <span class="concepts__count mono">{{ progreso.retosCompletados }} de {{ progreso.retosTotales }}</span>
+    </div>
+
+    <ul class="concepts__grid">
+      @for (reto of retos; track reto.id) {
+        @switch (estado(reto)) {
+          @case ('completado') {
+            <li class="concept concept--completado">
+              <span class="concept__icon">{{ numero(reto.id) }}</span>
+              <span class="concept__text"><span class="concept__name">{{ reto.concepto }}</span><span class="concept__meta">{{ reto.titulo }}</span></span>
+              <span class="concept__state">DOMINADO</span>
+            </li>
+          }
+          @case ('actual') {
+            <li class="concept concept--actual">
+              <span class="concept__icon">{{ numero(reto.id) }}</span>
+              <span class="concept__text"><span class="concept__name">Por descubrir</span><span class="concept__meta">{{ reto.titulo }}</span></span>
+              <span class="concept__state">SIGUIENTE</span>
+            </li>
+          }
+          @default {
+            <li class="concept concept--bloqueado">
+              <span class="concept__icon">{{ numero(reto.id) }}</span>
+              <span class="concept__text"><span class="concept__name">Por descubrir</span><span class="concept__meta">Reto {{ reto.id }}</span></span>
+              <span class="concept__state">BLOQUEADO</span>
+            </li>
+          }
+        }
+      }
+    </ul>
+  </section>
+</main>

@@ -1,4 +1,8 @@
 import { Routes } from '@angular/router';
+import { InicioComponent } from './pages/inicio/inicio.component';
+import { MapaComponent } from './pages/mapa/mapa.component';
+import { MisionComponent } from './pages/mision/mision.component';
+
 
 export const routes: Routes = [
     {
@@ -8,21 +12,15 @@ export const routes: Routes = [
     },
     {
         path: 'inicio',
-        loadComponent: () =>
-            import('./pages/inicio/inicio.component')
-                .then(m => m.InicioComponent)
+        component: InicioComponent,
     },
     {
         path: 'mapa',
-        loadComponent: () =>
-            import('./pages/mapa/mapa.component')
-                .then(m => m.MapaComponent)
+        component: MapaComponent,
     },
     {
         path: 'mision/:id',
-        loadComponent: () =>
-            import('./pages/mision/mision.component')
-                .then(m => m.MisionComponent)
+        component: MisionComponent,
     },
     {
         path: 'resultado',

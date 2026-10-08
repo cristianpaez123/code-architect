@@ -1,0 +1,75 @@
+<aside class="mentor" aria-labelledby="mentor-titulo">
+  <div class="mentor__top">
+    <span class="mentor__avatar" aria-hidden="true">🧑‍💻</span>
+    <div>
+      <h2 class="mentor__titulo" id="mentor-titulo">Mentor</h2>
+      <p class="mentor__sub">¿Te trabaste? Pide ayuda paso a paso.</p>
+    </div>
+  </div>
+
+  <div class="mentor__puntos">
+    <span>Puntos posibles</span>
+    <span class="mono points-text">{{ puntosPosibles }} / {{ puntosBase }}</span>
+  </div>
+
+  <div class="ayudas">
+    <!-- Repasar: gratis -->
+    <button type="button" class="ayuda" (click)="repasar.emit()">
+      <span class="ayuda__icono" aria-hidden="true">📖</span>
+      <span class="ayuda__texto">Repasar concepto</span>
+      <span class="ayuda__costo ayuda__costo--gratis">Gratis</span>
+    </button>
+
+    <!-- Pistas: se desbloquean en orden -->
+    <button
+      type="button"
+      class="ayuda"
+      [disabled]="!quedanPistas || solucionUsada"
+      (click)="pedirPista.emit()"
+    >
+      <span class="ayuda__icono" aria-hidden="true">💡</span>
+      <span class="ayuda__texto">
+        @if (quedanPistas) {
+          Pedir pista {{ pistasUsadas + 1 }} de {{ pistas.length }}
+        } @else {
+          Ya usaste todas las pistas
+        }
+      </span>
+      <span class="ayuda__costo">−{{ descuentoPista }} %</span>
+    </button>
+
+    <!-- Solución: pide confirmación -->
+    @if (!confirmandoSolucion) {
+      <button
+        type="button"
+        class="ayuda ayuda--peligro"
+        [disabled]="solucionUsada"
+        (click)="confirmandoSolucion = true"
+      >
+        <span class="ayuda__icono" aria-hidden="true">🔴</span>
+        <span class="ayuda__texto">{{ solucionUsada ? 'Solución mostrada' : 'Ver solución' }}</span>
+        <span class="ayuda__costo">−{{ descuentoSolucion }} %</span>
+      </button>
+    } @else {
+      <div class="confirmar">
+        <p class="confirmar__texto">¿Seguro? Perderás el {{ descuentoSolucion }} % de los puntos. Intenta antes con una pista.</p>
+        <div class="confirmar__botones">
+          <button type="button" class="btn btn--secondary" (click)="confirmandoSolucion = false">Seguir intentando</button>
+          <button type="button" class="btn btn--peligro" (click)="confirmarSolucion()">Ver solución</button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Pistas reveladas -->
+  @if (pistasVisibles.length > 0) {
+    <div class="pistas">
+      @for (pista of pistasVisibles; track $index) {
+        <div class="pista">
+          <span class="label">PISTA {{ $index + 1 }}</span>
+          <p class="pista__texto">{{ pista }}</p>
+        </div>
+      }
+    </div>
+  }
+</aside>

@@ -1,0 +1,151 @@
+<div class="reto">
+
+  <!-- Instrucción y avance -->
+  <div class="barra">
+    <p class="barra__texto">
+      @if (resuelto) {
+        <strong>¡Todos los bloques están en su lugar!</strong>
+      } @else if (bloqueSeleccionado !== null) {
+        <strong>Ahora elige a qué archivo va</strong> el bloque seleccionado.
+      } @else {
+        <strong>Selecciona un bloque</strong> y luego el archivo a donde debe ir.
+      }
+    </p>
+    <span class="barra__contador mono">{{ cantidadUbicados }} / {{ config.bloques.length }} ubicados</span>
+  </div>
+
+  <!-- Archivo original: bloques por ubicar -->
+  <section class="origen" [class.origen--destino]="seleccionadoEstaUbicado" aria-labelledby="titulo-origen">
+    <div class="archivo">
+      <span class="archivo__icono" aria-hidden="true">TS</span>
+      <h3 class="archivo__nombre" id="titulo-origen">{{ config.archivoOriginal }}</h3>
+      <span class="archivo__etiqueta">archivo original · {{ bloquesSinUbicar.length }} por ubicar</span>
+
+      @if (seleccionadoEstaUbicado) {
+        <button type="button" class="btn btn--secondary archivo__devolver" (click)="devolverAlOriginal()">
+          Devolver aquí
+        </button>
+      }
+    </div>
+
+    @if (bloquesSinUbicar.length > 0) {
+      <div class="bloques bloques--origen">
+        @for (bloque of bloquesSinUbicar; track bloque.id) {
+          <button
+            type="button"
+            class="bloque"
+            [class.bloque--seleccionado]="bloqueSeleccionado === bloque.id"
+            [attr.aria-pressed]="bloqueSeleccionado === bloque.id"
+            (click)="seleccionar(bloque)"
+          >
+            <span class="bloque__codigo">{{ bloque.codigo }}</span>
+          </button>
+        }
+      </div>
+    } @else {
+      <p class="origen__vacio">✓ Ya repartiste todos los bloques.</p>
+    }
+  </section>
+
+  <!-- Archivos destino -->
+  <div class="destinos">
+    @for (destino of config.destinos; track destino.id) {
+      <section class="destino" [class.destino--activo]="bloqueSeleccionado !== null && !resuelto">
+        <button
+          type="button"
+          class="destino__cabecera"
+          [disabled]="bloqueSeleccionado === null || resuelto"
+          (click)="moverA(destino)"
+        >
+          <span class="destino__nombre">{{ destino.nombre }}</span>
+          <span class="destino__descripcion">{{ destino.descripcion }}</span>
+          <span class="destino__archivo mono">{{ destino.archivo }}</span>
+          @if (bloqueSeleccionado !== null && !resuelto) {
+            <span class="destino__mover">＋ Mover aquí</span>
+          }
+        </button>
+
+        <div class="bloques">
+          @for (bloque of bloquesEn(destino); track bloque.id) {
+            <button
+              type="button"
+              class="bloque"
+              [class.bloque--seleccionado]="bloqueSeleccionado === bloque.id"
+              [class.bloque--bien]="resultado[bloque.id] === 'bien'"
+              [class.bloque--mal]="resultado[bloque.id] === 'mal'"
+              [attr.aria-pressed]="bloqueSeleccionado === bloque.id"
+              (click)="seleccionar(bloque)"
+            >
+              @if (resultado[bloque.id] === 'bien') {
+                <span class="bloque__marca bloque__marca--bien" aria-label="Correcto">✓</span>
+              }
+              @if (resultado[bloque.id] === 'mal') {
+                <span class="bloque__marca bloque__marca--mal" aria-label="Incorrecto">✕</span>
+              }
+              <span class="bloque__codigo">{{ bloque.codigo }}</span>
+              @if (resultado[bloque.id] === 'mal') {
+                <span class="bloque__explicacion">{{ bloque.explicacion }}</span>
+              }
+            </button>
+          } @empty {
+            <p class="destino__vacio">Sin bloques todavía</p>
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  <!-- Verificar y resultado -->
+  <div class="pie">
+    @if (resuelto) {
+      <div class="mensaje mensaje--exito" role="status">
+        <span class="mensaje__icono" aria-hidden="true">✓</span>
+        <div>
+          <strong>{{ usoSolucion ? 'Esta es la solución.' : '¡Excelente! Separaste el componente correctamente.' }}</strong>
+          <p>
+            @if (usoSolucion) {
+              Revisa por qué cada bloque va en su archivo antes de continuar.
+            } @else {
+              Lo lograste en {{ intentos }} {{ intentos === 1 ? 'intento' : 'intentos' }}.
+            }
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn--primary btn--lg" (click)="terminar()">
+        Ver lo que aprendiste
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+      </button>
+    } @else {
+      @if (cantidadErrores > 0) {
+        <div class="mensaje mensaje--error" role="status">
+          <span class="mensaje__icono" aria-hidden="true">!</span>
+          <div>
+            <strong>{{ cantidadErrores === 1 ? 'Hay 1 bloque' : 'Hay ' + cantidadErrores + ' bloques' }} en el archivo equivocado.</strong>
+            <p>Lee la explicación en rojo, selecciónalo y muévelo. Equivocarse no resta puntos.</p>
+          </div>
+        </div>
+      }
+      <button type="button" class="btn btn--primary btn--lg" [disabled]="!todosUbicados" (click)="verificar()">
+        Verificar
+      </button>
+      @if (!todosUbicados) {
+        <span class="pie__nota">Ubica todos los bloques para verificar.</span>
+      }
+    }
+  </div>
+
+  <!-- Barra rápida para celular: aparece al seleccionar un bloque -->
+  @if (bloqueSeleccionado !== null && !resuelto) {
+    <div class="mover-rapido">
+      <p class="mover-rapido__titulo">Mover el bloque seleccionado a:</p>
+      <div class="mover-rapido__botones">
+        @for (destino of config.destinos; track destino.id) {
+          <button type="button" class="btn btn--primary" (click)="moverA(destino)">{{ destino.nombre }}</button>
+        }
+        @if (seleccionadoEstaUbicado) {
+          <button type="button" class="btn btn--secondary" (click)="devolverAlOriginal()">Devolver</button>
+        }
+      </div>
+    </div>
+  }
+</div>

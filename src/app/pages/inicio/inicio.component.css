@@ -1,10 +1,536 @@
+/* Code Architect · Inicio (los estilos compartidos están en styles.css) */
+
 :host {
   display: block;
-  background: red;
-  min-height: 100vh;
 }
 
-h1 {
-  color: white;
-  font-size: 50px;
+/* ---------- Layout ---------- */
+.home {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 56px var(--gutter) 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 48px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  flex: 1 1 400px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 1.08;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.hero__text {
+  margin: 0;
+  max-width: 520px;
+  font-size: 17px;
+  color: var(--text-2);
+}
+
+.flow {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.flow__step {
+  padding: 4px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+}
+
+.flow__step--accent {
+  color: var(--current-text);
+  background: var(--surface-current);
+  border-color: var(--border-current);
+}
+
+.flow__arrow {
+  color: var(--text-3);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+/* ---------- Tarjeta del reto actual ---------- */
+.card {
+  flex: 1 1 520px;
+  min-width: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px -24px rgb(0 0 0 / 0.6);
+}
+
+.ticket {
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+}
+
+.ticket__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.ticket__id {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.ticket__meta {
+  color: var(--text-3);
+}
+
+.ticket__body {
+  padding: 18px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-left: 2px solid var(--current);
+  background: #0f1626;
+}
+
+.ticket__from {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+}
+
+.ticket__text {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+.card__body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card__eyebrow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge--current {
+  color: var(--current-text);
+  background: var(--surface-current);
+  border-color: var(--border-current);
+}
+
+.badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--current);
+}
+
+.card__title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.card__number {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.card__summary {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.card__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.card__cta {
+  align-self: flex-start;
+}
+
+.card__unlock {
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.card__unlock strong {
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+/* Ruta terminada */
+.card--done .card__body {
+  gap: 12px;
+}
+
+.done__points {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--xp);
+}
+
+.done__of {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+/* ---------- Progreso ---------- */
+.track {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.track__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.track__subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.stats {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.stat dt {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.stat dd {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.stat__points {
+  color: var(--xp);
+}
+
+.stat__of {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+/* Pista de pasos: la línea va del centro del primer paso al del último
+   (left y width se calculan en el .ts) */
+.steps-wrap {
+  position: relative;
+}
+
+.line-bg,
+.line-done {
+  position: absolute;
+  top: 17px;
+  height: 2px;
+}
+
+.line-bg {
+  background: var(--track);
+}
+
+.line-done {
+  background: var(--done);
+  transition: width 400ms ease;
+}
+
+.steps {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.step__dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.step__name {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.step--completado .step__dot {
+  background: var(--done);
+  color: var(--bg);
+  font-size: 15px;
+}
+
+.step--actual .step__dot {
+  background: var(--surface-current);
+  border: 2px solid var(--current);
+  color: var(--current-text);
+  box-shadow: 0 0 0 4px rgb(91 140 255 / 0.18);
+}
+
+.step--bloqueado .step__dot {
+  background: var(--bg);
+  border: 1px dashed var(--border-muted);
+  color: var(--text-3);
+}
+
+.step--bloqueado .step__name {
+  color: var(--text-3);
+}
+
+.track__current-mobile {
+  display: none;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.track__current-mobile strong {
+  color: var(--text);
+}
+
+/* ---------- Conceptos ---------- */
+.concepts {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.concepts__header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.concepts__count {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.concepts__grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.concept {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  min-width: 0;
+}
+
+.concept__icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.concept__text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.concept__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.concept__meta {
+  font-size: 12px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.concept__state {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.concept--completado .concept__icon { background: var(--done-icon-bg); color: var(--done); }
+.concept--completado .concept__state { color: var(--done); }
+
+.concept--actual { background: var(--surface-current); border-color: var(--border-current); }
+.concept--actual .concept__icon { background: var(--current-icon-bg); color: var(--current-text); }
+.concept--actual .concept__name { color: var(--text-2); }
+.concept--actual .concept__state { color: var(--current-text); }
+
+.concept--bloqueado { background: transparent; border-style: dashed; border-color: var(--border-strong); }
+.concept--bloqueado .concept__icon { background: var(--surface-2); color: var(--text-3); }
+.concept--bloqueado .concept__name { color: var(--text-2); }
+.concept--bloqueado .concept__state { color: var(--text-3); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .stats {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .home {
+    padding-top: 32px;
+    padding-bottom: 56px;
+    gap: 32px;
+  }
+
+  .intro {
+    gap: 32px;
+  }
+
+  .card__body,
+  .track {
+    padding: 20px;
+  }
+
+  .card__cta {
+    align-self: stretch;
+  }
+
+  .stat dd {
+    font-size: 22px;
+  }
+
+  /* Los 8 pasos quedan como puntos; el reto actual se nombra debajo */
+  .step__dot {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .line-bg,
+  .line-done {
+    top: 13px;
+  }
+
+  .step__name {
+    display: none;
+  }
+
+  .track__current-mobile {
+    display: block;
+  }
 }

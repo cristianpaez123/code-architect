@@ -1,1 +1,339 @@
-   body { margin: 0; background: #0b0e13; }
+/* =========================================================
+   Code Architect · estilos compartidos
+   (colores, base, header, botones y utilidades)
+   ========================================================= */
+
+:root {
+  /* Fondos y superficies */
+  --bg: #0b0e13;
+  --bg-header: #0d1117;
+  --bg-canvas: #0e1218;
+  --surface-1: #11151c;
+  --surface-2: #161b24;
+  --surface-3: #1d232e;
+  --surface-current: #131c2e;
+  --surface-done: #0f1a16;
+  --surface-locked: #0f1319;
+
+  /* Bordes */
+  --border-subtle: #1a2029;
+  --border: #232a35;
+  --border-strong: #323b4a;
+  --border-muted: #4a5363;
+  --border-current: #2a3c66;
+  --border-done: #1e4a36;
+
+  /* Texto */
+  --text: #e7ebf2;
+  --text-soft: #c9d1dd;
+  --text-2: #a6b0c0;
+  --text-3: #7d8799;
+
+  /* Acción y estados */
+  --action: #2f62e8;
+  --action-hover: #3b6ef2;
+  --current: #5b8cff;
+  --current-text: #8db0ff;
+  --current-icon-bg: #16223f;
+  --current-icon-strong: #1c2c52;
+  --done: #3dd68c;
+  --done-icon-bg: #0f2219;
+  --done-line: #2f7d5a;
+  --locked-line: #3a4352;
+  --xp: #f2b84b;
+  --track: #232a35;
+  --bar-off: #2c3340;
+
+  /* Tipografía */
+  --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+
+  /* Layout */
+  --container: 1280px;
+  --gutter: 32px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 16px;
+  }
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--current-text);
+  outline-offset: 2px;
+}
+
+/* ---------- Utilidades ---------- */
+.mono {
+  font-family: var(--font-mono);
+}
+
+.strong {
+  color: var(--text);
+}
+
+.points-text {
+  color: var(--xp);
+}
+
+.label {
+  display: block;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--current-text);
+}
+
+.section-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.btn--lg {
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--primary {
+  background: var(--action);
+  border-color: var(--action);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn--primary:hover {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+}
+
+.btn--secondary {
+  border-color: var(--border-strong);
+}
+
+.btn--secondary:hover {
+  background: var(--surface-2);
+  border-color: var(--border-muted);
+}
+
+/* ---------- Puntos ---------- */
+.points {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--xp);
+}
+
+/* ---------- Dificultad (3 barras) ---------- */
+.difficulty {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.difficulty__bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.bar {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--bar-off);
+}
+
+.bar.on {
+  background: var(--text-2);
+}
+
+/* ---------- Header ---------- */
+.header {
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+}
+
+.header__inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.header__spacer {
+  flex: 1 1 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand__mark {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--current-icon-bg);
+  border: 1px solid var(--border-current);
+  color: var(--current-text);
+}
+
+.brand__name {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+}
+
+.nav__link {
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav__link:hover {
+  color: var(--text);
+}
+
+.nav__link.is-active {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.player__level {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bg);
+  background: var(--xp);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: var(--surface-3);
+  color: var(--text);
+  font: 600 13px var(--font-sans);
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .header__inner {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .brand__name {
+    display: none;
+  }
+
+  .nav {
+    order: 3;
+    width: 100%;
+  }
+
+  .nav__link {
+    flex: 1 1 0;
+    text-align: center;
+  }
+}

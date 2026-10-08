@@ -1,0 +1,175 @@
+:host {
+  display: block;
+}
+
+.mentor {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mentor__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mentor__avatar {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-current);
+  border: 1px solid var(--border-current);
+  font-size: 20px;
+}
+
+.mentor__titulo {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mentor__sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.mentor__puntos {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* ---------- Botones de ayuda ---------- */
+.ayudas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ayuda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text);
+  font: 500 14px var(--font-sans);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.ayuda:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--border-muted);
+}
+
+.ayuda:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ayuda__icono {
+  font-size: 16px;
+}
+
+.ayuda__texto {
+  flex: 1 1 0;
+}
+
+.ayuda__costo {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--xp);
+}
+
+.ayuda__costo--gratis {
+  color: var(--done);
+}
+
+.ayuda--peligro .ayuda__costo {
+  color: #f0705a;
+}
+
+/* ---------- Confirmar solución ---------- */
+.confirmar {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #5a2e2a;
+  background: #1c1414;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirmar__texto {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.confirmar__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.confirmar__botones .btn {
+  flex: 1 1 120px;
+  min-height: 40px;
+  font-size: 13px;
+}
+
+.btn--peligro {
+  background: #b93a2b;
+  border-color: #b93a2b;
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn--peligro:hover {
+  background: #c94635;
+}
+
+/* ---------- Pistas reveladas ---------- */
+.pistas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pista {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #1f1a0e;
+  border: 1px solid #4a3b16;
+}
+
+.pista .label {
+  color: var(--xp);
+}
+
+.pista__texto {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-soft);
+}

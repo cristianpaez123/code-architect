@@ -1,0 +1,100 @@
+@if (reto.induccion; as induccion) {
+  <article class="induccion">
+
+    <!-- Ticket -->
+    <section class="ticket">
+      <div class="ticket__bar">
+        <span class="ticket__id">TICKET #{{ reto.id }}</span>
+        <span class="ticket__meta">De: {{ induccion.remitente }} · Para: Junior Developer</span>
+      </div>
+      <p class="ticket__text">{{ reto.contexto }}</p>
+    </section>
+
+    <!-- Idea y vida real -->
+    <div class="ideas">
+      <section class="bloque bloque--idea">
+        <h2 class="bloque__titulo"><span aria-hidden="true">💡</span> La idea en una frase</h2>
+        <p class="bloque__texto">{{ induccion.idea }}</p>
+      </section>
+
+      <section class="bloque">
+        <h2 class="bloque__titulo"><span aria-hidden="true">🌎</span> En la vida real</h2>
+        <p class="bloque__texto">{{ induccion.vidaReal }}</p>
+      </section>
+    </div>
+
+    <!-- Código de ejemplo -->
+    <section class="bloque">
+      <h2 class="bloque__titulo"><span aria-hidden="true">🧩</span> Cómo se ve en código</h2>
+      <div class="ejemplos">
+        @for (ejemplo of induccion.ejemplos; track $index) {
+          <figure class="ejemplo" [class.ejemplo--mal]="!ejemplo.esCorrecto" [class.ejemplo--bien]="ejemplo.esCorrecto">
+            <figcaption class="ejemplo__titulo">
+              <span class="ejemplo__icono" aria-hidden="true">{{ ejemplo.esCorrecto ? '✓' : '✕' }}</span>
+              {{ ejemplo.titulo }}
+            </figcaption>
+            @if (ejemplo.archivo) {
+              <div class="ejemplo__archivo">{{ ejemplo.archivo }}</div>
+            }
+            <pre class="ejemplo__codigo"><code>{{ ejemplo.codigo }}</code></pre>
+          </figure>
+        }
+      </div>
+    </section>
+
+    <!-- Tabla guía -->
+    <section class="bloque">
+      <h2 class="bloque__titulo"><span aria-hidden="true">🛠️</span> {{ induccion.guia.titulo }}</h2>
+      <div class="tabla-scroll">
+        <table class="tabla">
+          <thead>
+            <tr>
+              @for (columna of induccion.guia.columnas; track $index) {
+                <th scope="col">{{ columna }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (fila of induccion.guia.filas; track $index) {
+              <tr>
+                @for (celda of fila; track $index) {
+                  <td>{{ celda }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (induccion.notaAngular) {
+        <p class="nota"><strong>En Angular:</strong> {{ induccion.notaAngular }}</p>
+      }
+    </section>
+
+    <!-- Objetivo y cómo se juega -->
+    <div class="ideas">
+      <section class="bloque bloque--objetivo">
+        <h2 class="bloque__titulo"><span aria-hidden="true">🎯</span> Tu objetivo</h2>
+        <p class="bloque__texto">{{ induccion.objetivo }}</p>
+      </section>
+
+      <section class="bloque">
+        <h2 class="bloque__titulo"><span aria-hidden="true">🎮</span> Cómo se juega</h2>
+        <ol class="pasos">
+          @for (paso of induccion.comoJugar; track $index) {
+            <li>{{ paso }}</li>
+          }
+        </ol>
+      </section>
+    </div>
+
+    <div class="acciones">
+      <button type="button" class="btn btn--primary btn--lg" (click)="empezar.emit()">
+        {{ modoRepaso ? 'Volver al reto' : 'Entendido, empezar reto' }}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+      </button>
+      @if (!modoRepaso) {
+        <span class="acciones__nota">Puedes volver a esta explicación cuando quieras con «Repasar concepto». Es gratis.</span>
+      }
+    </div>
+  </article>
+}
